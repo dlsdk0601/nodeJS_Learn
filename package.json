@@ -19,5 +19,8 @@
   "homepage": "https://github.com/dlsdk0601/nodeJS_Learn#readme",
   "devDependencies": {
     "nodemon": "^2.0.19"
+  },
+  "dependencies": {
+    "express": "^4.18.1"
   }
 }

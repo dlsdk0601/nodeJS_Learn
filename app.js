@@ -1,10 +1,17 @@
-// 서버 생성
 const http = require("http");
-const routes = require("./routes");
+const express = require("express");
 
-// http가 만든 서버를 변수에 저장해야합니다.
+const app = express();
 
-const server = http.createServer(routes);
+app.use((req, res, next) => {
+  console.log("middle1");
+});
 
-// node가 script를 바로 종료하지 않고, 계속 실행되게합니다.
+app.use((req, res, next) => {
+  // 첫번째 미들웨어에서 next()를 하지 않으면 넘어오지 않음
+  console.log("middle2");
+});
+
+const server = http.createServer(app);
+
 server.listen(3000);
