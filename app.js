@@ -1,19 +1,14 @@
-const http = require("http");
 const express = require("express");
 
 const app = express();
 
-app.use((req, res, next) => {
-  console.log("middle1");
-  next();
+app.use("/add-product", (req, res, next) => {
+  res.send("<h1>add product page</h1>");
+  //   여기서 next를 쓰게 되면 다음 middleware로 넘어가기에 사용해선 안됨
 });
 
-app.use((req, res, next) => {
-  // 첫번째 미들웨어에서 next()를 하지 않으면 넘어오지 않음
-  console.log("middle2");
+app.use("/", (req, res, next) => {
   res.send("<h1>Hello world</h1>");
 });
 
-const server = http.createServer(app);
-
-server.listen(3000);
+app.listen(3000);
