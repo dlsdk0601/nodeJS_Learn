@@ -1,3 +1,4 @@
+const path = require("path");
 const products = [];
 
 const getAddProduct = (_, res) => {
@@ -16,7 +17,7 @@ const getProducts = (_, res) => {
   // res.sendFile(path.join(__dirname, "../", "views", "shop.html"));
 
   // pug 탬플릿을 사용할 경우는 render로 파일을 부르고 app.js에서 이미 pug를 사용한다고 정의했기에 .pug는 생략 가능. 그리고 views 경로도 설정 헤줬기 때문에 경로도 path도 필요없음.
-  res.render("shop");
+  res.render("shop", { prods: products, docTitle: "Shop" });
 };
 
 module.exports = {
