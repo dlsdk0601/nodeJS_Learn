@@ -3,6 +3,13 @@ const bodyParser = require("body-parser");
 const path = require("path");
 
 const app = express();
+
+// view engine으로 어떤걸 사용할 건지 설정.
+// 설정하지 않을 경우, 기본 html이 디폴트
+// pug, ejs 등과 같은 엔진이 있다.
+app.set("view engine", "pug");
+app.set("views", "views");
+
 const admonRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
 
