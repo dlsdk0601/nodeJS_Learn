@@ -1,15 +1,18 @@
 const products = [];
-
-class Product {
+module.exports = class Product {
   constructor(title) {
-    this.title = title;
+    if (title) {
+      this.title = title;
+    }
   }
 
-  save = () => {
+  save() {
     products.push(this);
-  };
+  }
 
-  static fecthAll = () => products;
-}
+  fetchAll() {
+    return products;
+  }
+};
 
-module.exports = { Product };
+// module.exports = { Product };
