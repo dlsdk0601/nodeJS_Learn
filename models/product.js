@@ -17,10 +17,11 @@ const getProductsFromFile = (callBack) => {
   });
 };
 module.exports = class Product {
-  constructor(title) {
-    if (title) {
-      this.title = title;
-    }
+  constructor(title, imageUrl, price, description) {
+    this.title = title;
+    this.imageUrl = imageUrl;
+    this.description = description;
+    this.price = price;
   }
 
   save() {
