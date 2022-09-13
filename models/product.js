@@ -1,7 +1,21 @@
 const fs = require("fs");
 const path = require("path");
 
-const products = [];
+const p = path.join(
+  path.dirname(process.mainModule.filename),
+  "data",
+  "products.json"
+);
+
+const getProductsFromFile = (callBack) => {
+  fs.readFile(p, (err, fileContent) => {
+    if (err) {
+      callBack([]);
+    } else {
+      callBack(JSON.parse(fileContent));
+    }
+  });
+};
 module.exports = class Product {
   constructor(title) {
     if (title) {
@@ -10,17 +24,8 @@ module.exports = class Product {
   }
 
   save() {
-    products.push(this);
-    const p = path.join(
-      path.dirname(process.mainModule.filename),
-      "data",
-      "products.json"
-    );
-    fs.readFile(p, (err, fileContent) => {
-      let products = [];
-      if (!err) {
-        products = JSON.parse(fileContent);
-      }
+    getProductsFromFile((products) => {
+      // this가 class의 this임을 명확하게 하기 위해 arrow Function 사용
       products.push(this);
       fs.writeFile(p, JSON.stringify(products), (err) => {
         console.log(err);
@@ -29,17 +34,7 @@ module.exports = class Product {
   }
 
   fetchAll(callBack) {
-    const p = path.join(
-      path.dirname(process.mainModule.filename),
-      "data",
-      "products.json"
-    );
-    fs.readFile(p, (err, fileContent) => {
-      if (err) {
-        callBack([]);
-      }
-      callBack(JSON.parse(fileContent));
-    });
+    getProductsFromFile(callBack);
   }
 };
 
