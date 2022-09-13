@@ -1,5 +1,6 @@
 .form-control {
-  margin: 1rem 0;
+  width: 60%;
+  margin: 1rem auto;
 }
 
 .form-control label,
