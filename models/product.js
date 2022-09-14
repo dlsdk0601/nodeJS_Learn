@@ -25,6 +25,7 @@ module.exports = class Product {
   }
 
   save() {
+    this.id = Math.random().toString();
     getProductsFromFile((products) => {
       // this가 class의 this임을 명확하게 하기 위해 arrow Function 사용
       products.push(this);

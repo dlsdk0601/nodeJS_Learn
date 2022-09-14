@@ -6,21 +6,22 @@ html(lang="en")
         meta(name="viewport", content="width=device-width, initial-scale=1.0")
         block title
         link(rel="stylesheet", href="/css/main.css")
+        script(scr="/js/main.js")
         block styles
     body 
         header.main-header
             nav.main-header__nav 
                 ul.main-header__item-list 
                     li.main-header__item 
-                        a(href="/") Shop 
+                        a(href="/", class=(path === "/" ? "active": "")) Shop 
                     li.main-header__item 
-                        a(href="/products") Products 
+                        a(href="/products", class=(path === "/products" ? "active": "")) Products 
                     li.main-header__item 
-                        a(href="/cart") Cart 
+                        a(href="/cart", class=(path === "/cart" ? "active": "")) Cart 
                     li.main-header__item 
-                        a(href="/orders") Orders 
+                        a(href="/orders", class=(path === "/orders" ? "active": "")) Orders 
                     li.main-header__item 
-                        a(href="/admin/products") Admin Products 
+                        a(href="/admin/products", class=(path === "/admin/products" ? "active": "")) Admin Products 
                     li.main-header__item 
-                        a.active(href="/admin/add-product") Add Product 
+                        a(href="/admin/add-product", class=(path === "/admin/add-product" ? "active": "")) Add Product 
         block content
