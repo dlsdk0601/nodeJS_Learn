@@ -41,8 +41,14 @@ const getOrders = (req, res) => {
 
 const getProduct = (req, res) => {
   const prodId = req.params.productId;
-  console.log(prodId);
-  res.redirect("/");
+  const productModel = new Product();
+  productModel.findById(prodId, (prd) => {
+    res.render("shop/product-detail", {
+      ...prd,
+      pageTitle: productModel.title,
+      path: "/products",
+    });
+  });
 };
 
 module.exports = {
