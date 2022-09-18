@@ -11,18 +11,29 @@ const getAddProduct = (_, res) => {
   res.render("admin/edit-product", {
     pageTitle: "add-product",
     path: "/admin/add-product",
+    editing: false,
   });
 };
 
 const getEditProduct = (req, res) => {
-  const editMode = req.query.eidt;
+  const editMode = req.query.edit;
   if (!editMode) {
     return res.redirect("/");
   }
-  res.render("admin/edit-product", {
-    pageTitle: "edit-product",
-    path: "/admin/edit-product",
-    editing: true,
+
+  const prodId = req.params.productId;
+  const productModel = new Product();
+  productModel.findById(prodId, (product) => {
+    if (product) {
+      return res.redirect("/");
+    }
+
+    res.render("admin/edit-product", {
+      pageTitle: "edit-product",
+      path: "/admin/edit-product",
+      editing: true,
+      product,
+    });
   });
 };
 

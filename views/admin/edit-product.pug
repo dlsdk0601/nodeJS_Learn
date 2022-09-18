@@ -8,18 +8,33 @@ block styles
 
 block content 
     main 
-        form.product-form(action="/admin/add-product", method="POST")
-            .form-control 
-                label(for="title") Title 
-                input(type="text", name="title")#title
-            .form-control 
-                label(for="imageUrl") Image Url 
-                input(type="text", name="imageUrl")#imageUrl
-            .form-control 
-                label(for="price") Price 
-                input(type="number", name="price")#price
-            .form-control 
-                label(for="description") Description 
-                textarea(row="5", name="description")#description
-
-            button.btn(type="submit") Add Product
+        if editing 
+            form.product-form(action="/admin/edit-product", method="POST")
+                .form-control 
+                    label(for="title") Title 
+                    input(type="text", name="title" value=(product.title))#title
+                .form-control 
+                    label(for="imageUrl") Image Url 
+                    input(type="text", name="imageUrl" value=(product.imgageUrl))#imageUrl
+                .form-control 
+                    label(for="price") Price 
+                    input(type="number", name="price", value=(product.price))#price
+                .form-control 
+                    label(for="description") Description 
+                    textarea(row="5", name="description", value=(product.description))#description
+                button.btn(type="submit") Edit Product
+        else 
+            form.product-form(action="/admin/add-product", method="POST")
+                .form-control 
+                    label(for="title") Title 
+                    input(type="text", name="title")#title
+                .form-control 
+                    label(for="imageUrl") Image Url 
+                    input(type="text", name="imageUrl")#imageUrl
+                .form-control 
+                    label(for="price") Price 
+                    input(type="number", name="price")#price
+                .form-control 
+                    label(for="description") Description 
+                    textarea(row="5", name="description")#description
+                button.btn(type="submit") Add Product
