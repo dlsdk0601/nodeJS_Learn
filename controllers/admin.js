@@ -8,7 +8,22 @@ const getAddProduct = (_, res) => {
   // );
 
   // pug::::::::::::::::::::::::::::::::::::::::::
-  res.render("admin/add-product", { pageTitle: "add-product" });
+  res.render("admin/edit-product", {
+    pageTitle: "add-product",
+    path: "/admin/add-product",
+  });
+};
+
+const getEditProduct = (req, res) => {
+  const editMode = req.query.eidt;
+  if (!editMode) {
+    return res.redirect("/");
+  }
+  res.render("admin/edit-product", {
+    pageTitle: "edit-product",
+    path: "/admin/edit-product",
+    editing: true,
+  });
 };
 
 const postAddProduct = (req, res) => {
@@ -33,4 +48,5 @@ module.exports = {
   getAddProduct,
   postAddProduct,
   getProducts,
+  getEditProduct,
 };
