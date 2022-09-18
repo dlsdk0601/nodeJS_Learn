@@ -24,13 +24,13 @@ const getEditProduct = (req, res) => {
   const prodId = req.params.productId;
   const productModel = new Product();
   productModel.findById(prodId, (product) => {
-    if (product) {
+    if (!product) {
       return res.redirect("/");
     }
 
     res.render("admin/edit-product", {
       pageTitle: "edit-product",
-      path: "/admin/edit-product",
+      path: "/admin/products",
       editing: true,
       product,
     });
@@ -55,9 +55,12 @@ const getProducts = (req, res) => {
   });
 };
 
+const postEditProduct = (req, res) => {};
+
 module.exports = {
   getAddProduct,
   postAddProduct,
   getProducts,
   getEditProduct,
+  postEditProduct,
 };
