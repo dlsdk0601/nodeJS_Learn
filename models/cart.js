@@ -7,7 +7,7 @@ const p = path.join(
   "cart.json"
 );
 
-class Cart {
+module.exports = class Cart {
   // 장바구니를 해당 페이지에 올때마다 새로 생성하는게 아니라, 만들어진 애를 계속 보여주는거라서 constructor가 아닌 static을 사용
 
   constructor() {}
@@ -46,6 +46,23 @@ class Cart {
       });
     });
   }
-}
 
-module.exports = Cart;
+  static deleteProduct(id, price) {
+    fs.readFile(p, (err, fileContent) => {
+      if (err) {
+        return;
+      }
+      const updatedCart = { ...JSON.parse(fileContent) };
+      const product = updatedCart.products.find((item) => item.id === id);
+      const productQty = product.qty;
+      updatedCart.products = updatedCart.products.filter(
+        (item) => item.id !== id
+      );
+      updatedCart.totalPrice -= price * productQty;
+
+      fs.writeFile(p, JSON.stringify(updatedCart), (err) => {
+        console.log(err);
+      });
+    });
+  }
+};
