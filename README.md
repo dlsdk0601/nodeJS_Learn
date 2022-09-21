@@ -7,6 +7,18 @@
 
 <br />
 
+## 실행 방법
+
+git clone을 받으 신 후,
+
+> npm i
+
+로 node_modules을 다운 받으시고,
+
+> npm start
+
+로컬 서버를 키신 후, localhost:3000 접속
+
 ## Web 동작 방식
 
 user / client 단이 있습니다.
