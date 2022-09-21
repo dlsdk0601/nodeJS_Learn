@@ -4,6 +4,8 @@ const bodyParser = require("body-parser");
 
 const errorController = require("./controllers/error");
 
+const db = require("./utils/databse");
+
 const path = require("path");
 
 const app = express();
@@ -16,6 +18,12 @@ app.set("views", "views");
 
 const admonRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
+
+db.execute("SELECT * FROM products")
+  .then((res) => {
+    console.log(res);
+  })
+  .catch((err) => console.log(err));
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
