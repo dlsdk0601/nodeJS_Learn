@@ -19,12 +19,6 @@ app.set("views", "views");
 const admonRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
 
-db.execute("SELECT * FROM products")
-  .then((res) => {
-    console.log(res);
-  })
-  .catch((err) => console.log(err));
-
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // html에 해당하는 css 파일이 다운 받아지지 않음
