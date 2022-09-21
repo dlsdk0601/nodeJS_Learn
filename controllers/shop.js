@@ -23,9 +23,12 @@ const getProducts = (_, res) => {
 
 const getIndex = (req, res) => {
   const prod = new Product();
-  prod.fetchAll((products) => {
-    res.render("shop/index", { prods: products, pageTitle: "Shop", path: "/" });
-  });
+  prod
+    .fetchAll()
+    .then(([rows, fieldData]) => {
+      res.render("shop/index", { prods: rows, pageTitle: "Shop", path: "/" });
+    })
+    .catch((err) => console.log(err));
 };
 
 const getCart = (req, res) => {
@@ -75,13 +78,16 @@ const getOrders = (req, res) => {
 const getProduct = (req, res) => {
   const prodId = req.params.productId;
   const productModel = new Product();
-  productModel.findById(prodId, (prd) => {
-    res.render("shop/product-detail", {
-      ...prd,
-      pageTitle: productModel.title,
-      path: "/products",
-    });
-  });
+  productModel
+    .findById(prodId)
+    .then(([product]) => {
+      res.render("shop/product-detail", {
+        prd: product[0],
+        pageTitle: productModel.title,
+        path: "/products",
+      });
+    })
+    .catch((err) => console.log(err));
 };
 
 const postCartDeleteProduct = (req, res) => {
