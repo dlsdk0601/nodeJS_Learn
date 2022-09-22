@@ -39,12 +39,13 @@ const getEditProduct = (req, res) => {
 
 const postAddProduct = (req, res) => {
   const { title, imageUrl, price, description } = req.body;
-  const product = new Product(null, title, imageUrl, price, description);
-  product
-    .save()
-    .then(() => {
-      res.redirect("/");
-    })
+  Product.create({
+    title,
+    imageUrl,
+    price,
+    description,
+  })
+    .then((res) => {})
     .catch((err) => console.log(err));
 };
 
