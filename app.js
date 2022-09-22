@@ -4,7 +4,7 @@ const bodyParser = require("body-parser");
 
 const errorController = require("./controllers/error");
 
-const db = require("./utils/databse");
+const sequelize = require("./utils/databse");
 
 const path = require("path");
 
@@ -34,4 +34,10 @@ app.use(shopRoutes);
 // 404 error
 app.use(errorController.get404);
 
-app.listen(3000);
+// db table생성
+sequelize
+  .sync({ force: false })
+  .then((res) => {
+    app.listen(3000);
+  })
+  .catch((err) => console.log(err));
