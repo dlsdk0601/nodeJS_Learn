@@ -72,13 +72,11 @@ const getOrders = (req, res) => {
 
 const getProduct = (req, res) => {
   const prodId = req.params.productId;
-  const productModel = new Product();
-  productModel
-    .findById(prodId)
-    .then(([product]) => {
+  Product.findByPk(prodId)
+    .then((product) => {
       res.render("shop/product-detail", {
-        prd: product[0],
-        pageTitle: productModel.title,
+        prd: product.dataValues,
+        pageTitle: product.dataValues.title,
         path: "/products",
       });
     })
