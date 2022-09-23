@@ -1,26 +1,26 @@
-const Sequelize = require("sequelize");
-const sequelize = require("../utils/databse");
+import { INTEGER, STRING, DOUBLE } from "sequelize";
+import sequelize from "../utils/databse.js";
 
 const Product = sequelize.define("product", {
   id: {
-    type: Sequelize.INTEGER,
+    type: INTEGER,
     autoIncrement: true,
     allowNull: false,
     primaryKey: true,
   },
-  title: Sequelize.STRING,
+  title: STRING,
   price: {
-    type: Sequelize.DOUBLE,
+    type: DOUBLE,
     allowNull: false,
   },
   imageUrl: {
-    type: Sequelize.STRING,
+    type: STRING,
     allowNull: false,
   },
   description: {
-    type: Sequelize.STRING,
+    type: STRING,
     allowNull: false,
   },
 });
 
-module.exports = Product;
+export default Product;

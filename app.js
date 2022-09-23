@@ -1,23 +1,19 @@
-const express = require("express");
-
-const bodyParser = require("body-parser");
-
-const errorController = require("./controllers/error");
-
-const sequelize = require("./utils/databse");
-
-const path = require("path");
+import express from "express";
+import bodyParser from "body-parser";
+import path from "path";
+import errorPage from "./controllers/error.js";
+import sequelize from "./utils/databse.js";
+import api from "./routes/index.js";
 
 const app = express();
+
+const __dirname = path.resolve();
 
 // view engine으로 어떤걸 사용할 건지 설정.
 // 설정하지 않을 경우, 기본 html이 디폴트
 // pug, ejs 등과 같은 엔진이 있다.
 app.set("view engine", "pug");
 app.set("views", "views");
-
-const admonRoutes = require("./routes/admin");
-const shopRoutes = require("./routes/shop");
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -28,11 +24,12 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
 
 // router 순서가 매우 중요하기에, 잘 고려해서 순서대로 작성할것.
-app.use("/admin", admonRoutes);
-app.use(shopRoutes);
+// app.use("/admin", adminRoutes);
+// app.use(shopRoutes);
+app.use(api);
 
 // 404 error
-app.use(errorController.get404);
+app.use(errorPage.get404);
 
 // db table생성
 sequelize

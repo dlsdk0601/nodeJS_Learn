@@ -1,13 +1,14 @@
-const fs = require("fs");
-const path = require("path");
+import fs from "fs";
+import path from "path";
+import dotenv from "dotenv";
 
-const p = path.join(
-  path.dirname(process.mainModule.filename),
-  "data",
-  "cart.json"
-);
+dotenv.config();
 
-module.exports = class Cart {
+const __dirname = path.resolve();
+
+const p = path.join(__dirname, "data", "cart.json");
+
+export default class Cart {
   // 장바구니를 해당 페이지에 올때마다 새로 생성하는게 아니라, 만들어진 애를 계속 보여주는거라서 constructor가 아닌 static을 사용
 
   constructor() {}
@@ -76,4 +77,4 @@ module.exports = class Cart {
       cb(cart);
     });
   }
-};
+}
