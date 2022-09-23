@@ -1,4 +1,5 @@
 {
+  "type": "module",
   "name": "nodejs_learn",
   "version": "1.0.0",
   "description": "",
@@ -18,6 +19,9 @@
   },
   "homepage": "https://github.com/dlsdk0601/nodeJS_Learn#readme",
   "devDependencies": {
+    "@babel/cli": "^7.18.10",
+    "@babel/core": "^7.19.1",
+    "@babel/preset-env": "^7.19.1",
     "nodemon": "^2.0.19"
   },
   "dependencies": {
