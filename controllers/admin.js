@@ -1,5 +1,4 @@
-const path = require("path");
-const Product = require("../models/product");
+import Product from "../models/product.js";
 
 const getAddProduct = (_, res) => {
   // html::::::::::::::::::::::::::::::::::::::::::
@@ -22,19 +21,20 @@ const getEditProduct = (req, res) => {
   }
 
   const prodId = req.params.productId;
-  const productModel = new Product();
-  productModel.findById(prodId, (product) => {
-    if (!product) {
-      return res.redirect("/");
-    }
+  Product.findByPk(prodId)
+    .then((product) => {
+      if (!product) {
+        return res.redirect("/");
+      }
 
-    res.render("admin/edit-product", {
-      pageTitle: "edit-product",
-      path: "/admin/products",
-      editing: true,
-      product,
-    });
-  });
+      res.render("admin/edit-product", {
+        pageTitle: "edit-product",
+        path: "/admin/products",
+        editing: true,
+        product,
+      });
+    })
+    .catch((err) => console.log(err));
 };
 
 const postAddProduct = (req, res) => {
@@ -45,11 +45,13 @@ const postAddProduct = (req, res) => {
     price,
     description,
   })
-    .then((res) => {})
+    .then((result) => {
+      res.redirect("/");
+    })
     .catch((err) => console.log(err));
 };
 
-const getProducts = (req, res) => {
+const getProducts = (_, res) => {
   Product.findAll()
     .then((products) => {
       res.render("admin/products", {
@@ -63,26 +65,34 @@ const getProducts = (req, res) => {
 
 const postEditProduct = (req, res) => {
   const { productId, title, imageUrl, price, description } = req.body;
-  const productModel = new Product(
-    productId,
-    title,
-    imageUrl,
-    price,
-    description
-  );
 
-  productModel.save();
-  res.redirect("/admin/products");
+  Product.findByPk(productId)
+    .then((product) => {
+      product.title = title;
+      product.imageUrl = imageUrl;
+      product.description = description;
+      product.price = price;
+      return product.save();
+    })
+    .then((result) => {
+      res.redirect("/admin/products");
+    })
+    .catch((err) => console.log(err));
 };
 
 const postDeleteProduct = (req, res) => {
   const prodId = req.body.productId;
-  const productModel = new Product();
-  productModel.deleteById(prodId);
-  res.redirect("/admin/products");
+  Product.findByPk(prodId)
+    .then((product) => {
+      return product.destroy();
+    })
+    .then((result) => {
+      res.redirect("/admin/products");
+    })
+    .catch((err) => console.log(err));
 };
 
-module.exports = {
+export default {
   getAddProduct,
   postAddProduct,
   getProducts,

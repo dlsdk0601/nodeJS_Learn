@@ -1,6 +1,5 @@
-const path = require("path");
-const Product = require("../models/product");
-const Cart = require("../models/cart");
+import Product from "../models/product.js";
+import Cart from "../models/cart.js";
 
 const getProducts = (_, res) => {
   Product.findAll()
@@ -14,7 +13,7 @@ const getProducts = (_, res) => {
     .catch((err) => console.log(err));
 };
 
-const getIndex = (req, res) => {
+const getIndex = (_, res) => {
   Product.findAll()
     .then((products) => {
       res.render("shop/index", {
@@ -26,7 +25,7 @@ const getIndex = (req, res) => {
     .catch((err) => console.log(err));
 };
 
-const getCart = (req, res) => {
+const getCart = (_, res) => {
   const productModel = new Product();
   Cart.getCart((cart) => {
     productModel.fetchAll((products) => {
@@ -62,11 +61,11 @@ const postCart = (req, res) => {
   res.redirect("/cart");
 };
 
-const getCheckout = (req, res) => {
+const getCheckout = (_, res) => {
   res.render("shop/checkout", { pageTitle: "Checkout", path: "/checkout" });
 };
 
-const getOrders = (req, res) => {
+const getOrders = (_, res) => {
   res.render("shop/orders", { pageTitle: "Your Orders", path: "/orders" });
 };
 
@@ -92,7 +91,7 @@ const postCartDeleteProduct = (req, res) => {
   });
 };
 
-module.exports = {
+export default {
   getProducts,
   getIndex,
   getCart,

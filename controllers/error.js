@@ -1,9 +1,9 @@
-const path = require("path");
+import path from "path";
 
 const get404 = (_, res) => {
   res.status(404).sendFile(path.join(__dirname, "views", "404.pug"));
 };
 
-module.exports = {
+export default {
   get404,
 };
