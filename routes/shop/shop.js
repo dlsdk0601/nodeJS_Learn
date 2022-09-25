@@ -13,12 +13,12 @@ shopRoutes.get("/products/:productId", shopController.getProduct);
 
 shopRoutes.get("/cart", shopController.getCart);
 
+shopRoutes.post("/create-order", shopController.postOrder);
+
 shopRoutes.post("/cart-delete-item", shopController.postCartDeleteProduct);
 
 shopRoutes.post("/cart", shopController.postCart);
 
 shopRoutes.get("/orders", shopController.getOrders);
-
-shopRoutes.get("/checkout", shopController.getCheckout);
 
 export default shopRoutes;
