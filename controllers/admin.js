@@ -16,6 +16,7 @@ const getAddProduct = (_, res) => {
 
 const getEditProduct = (req, res) => {
   const editMode = req.query.edit;
+
   if (!editMode) {
     return res.redirect("/");
   }
@@ -56,7 +57,6 @@ const postAddProduct = (req, res) => {
 };
 
 const getProducts = (req, res) => {
-  console.log(req.user);
   req.user
     .getProducts()
     .then((products) => {

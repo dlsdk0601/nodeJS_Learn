@@ -1,5 +1,4 @@
 import Product from "../models/product.js";
-import Order from "../models/order.js";
 
 const getProducts = (_, res) => {
   Product.findAll()
