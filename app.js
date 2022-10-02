@@ -2,14 +2,8 @@ import express from "express";
 import bodyParser from "body-parser";
 import path from "path";
 import errorPage from "./controllers/error.js";
-import sequelize from "./utils/databse.js";
-import Product from "./models/product.js";
-import User from "./models/user.js";
-import Cart from "./models/cart.js";
-import CartItem from "./models/cart-item.js";
-import Order from "./models/order.js";
-import OrderItem from "./models/order-item.js";
 import api from "./routes/index.js";
+import mongoConnect from "./utils/databse.js";
 
 const app = express();
 
@@ -29,53 +23,17 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // 이제 .css나 .js파일을 찾으려할때는 자동으로 public 폴더로 포워딩한다.
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use((req, res, next) => {
-  User.findByPk(1)
-    .then((user) => {
-      req.user = user;
-      next();
-    })
-    .catch((err) => console.log(err));
-});
-
 // router 순서가 매우 중요하기에, 잘 고려해서 순서대로 작성할것.
 app.use(api);
 
 // 404 error
 app.use(errorPage.get404);
 
-// product와 user model 서로 외래키로 연결되게 설정
-Product.belongsTo(User, {
-  constrains: true,
-  onDelete: "CASCADE",
+// sequelize와 관련된 명령어 모두 지움
+
+// 이제부터 mongodb 시작
+
+mongoConnect((client) => {
+  console.log(client);
+  app.listen(3000);
 });
-User.hasMany(Product);
-
-User.hasOne(Cart);
-Cart.belongsTo(User);
-Cart.belongsToMany(Product, { through: CartItem });
-Product.belongsToMany(Cart, { through: CartItem });
-Order.belongsTo(User);
-User.hasMany(Order);
-Order.belongsToMany(Product, { through: OrderItem });
-
-// db table생성
-sequelize
-  // .sync({ force: true })
-  .sync()
-  .then((res) => {
-    return User.findByPk(1);
-  })
-  .then((user) => {
-    if (!user) {
-      User.create({ name: "good", email: "ddd@ddd.cd" });
-    }
-    return user;
-  })
-  .then((user) => {
-    return user.createCart();
-  })
-  .then((cart) => {
-    app.listen(3000);
-  })
-  .catch((err) => console.log(err));
