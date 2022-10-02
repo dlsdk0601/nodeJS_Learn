@@ -1,13 +1,20 @@
-import Sequelize from "sequelize";
-import { config } from "dotenv";
+import mongidb from "mongodb";
+import dotenv from "dotenv";
 
-config();
+dotenv.config();
 
-const sequelize = new Sequelize(
-  "node-complete",
-  "root",
-  process.env.NODE_DBPASSWORD,
-  { dialect: "mysql", host: "localhost" }
-);
+const mongClient = mongidb.MongoClient;
 
-export default sequelize;
+const mongoConnect = (callBck) => {
+  mongClient
+    .connect(
+      `mongodb+srv://dlsdk0601:${process.env.MONGODB_PASSWOR}@portfolio.dacwcma.mongodb.net/test`
+    )
+    .then((result) => {
+      console.log("connect:::::::::::::::::::::::::::::::");
+      callBck(result);
+    })
+    .catch((err) => console.log(err));
+};
+
+export default mongoConnect;
