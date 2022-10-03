@@ -3,6 +3,8 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+let _db;
+
 const mongClient = mongidb.MongoClient;
 
 const mongoConnect = (callBck) => {
@@ -12,9 +14,21 @@ const mongoConnect = (callBck) => {
     )
     .then((result) => {
       console.log("connect:::::::::::::::::::::::::::::::");
+      _db = result.db();
       callBck(result);
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      console.log(err);
+      throw err;
+    });
 };
 
-export default mongoConnect;
+const getDB = () => {
+  if (_db) {
+    return _db;
+  }
+
+  throw "No database found";
+};
+
+export default { mongoConnect, getDB };
