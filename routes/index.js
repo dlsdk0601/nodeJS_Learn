@@ -4,7 +4,7 @@ import adminRoutes from "./admin/admin.js";
 
 const api = express.Router();
 
-api.use("/admin", adminRoutes);
-// api.use(shopRoutes);
+// api.use("/admin", adminRoutes);
+api.use(shopRoutes);
 
 export default api;
