@@ -3,7 +3,7 @@ import bodyParser from "body-parser";
 import path from "path";
 import errorPage from "./controllers/error.js";
 import api from "./routes/index.js";
-import mongoConnect from "./utils/databse.js";
+import db from "./utils/databse.js";
 
 const app = express();
 
@@ -33,7 +33,7 @@ app.use(errorPage.get404);
 
 // 이제부터 mongodb 시작
 
-mongoConnect((client) => {
+db.mongoConnect((client) => {
   console.log(client);
   app.listen(3000);
 });
