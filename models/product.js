@@ -7,6 +7,16 @@ class Product {
     this.description = description;
     this.imageUrl = imageUrl;
   }
+  save() {
+    const db = mongoConnect.getDB();
+    return db
+      .collection("products")
+      .insertOne(this)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => console.log(err));
+  }
 }
 
 const Product = sequelize.define("product", {
