@@ -93,7 +93,7 @@ const getOrders = (req, res) => {
 
 const getProduct = (req, res) => {
   const prodId = req.params.productId;
-  Product.findByPk(prodId)
+  Product.findById(prodId)
     .then((product) => {
       res.render("shop/product-detail", {
         prd: product.dataValues,
@@ -102,6 +102,15 @@ const getProduct = (req, res) => {
       });
     })
     .catch((err) => console.log(err));
+  // Product.findByPk(prodId)
+  //   .then((product) => {
+  //     res.render("shop/product-detail", {
+  //       prd: product.dataValues,
+  //       pageTitle: product.dataValues.title,
+  //       path: "/products",
+  //     });
+  //   })
+  //   .catch((err) => console.log(err));
 };
 
 const postCartDeleteProduct = (req, res) => {
