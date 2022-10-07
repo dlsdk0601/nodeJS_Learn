@@ -2,13 +2,22 @@ import mongodb from "mongoose";
 import mongoConnect from "../utils/databse.js";
 
 class Product {
-  constructor(title, price, description, imageUrl) {
+  constructor(title, price, description, imageUrl, id) {
     this.title = title;
     this.price = price;
     this.description = description;
     this.imageUrl = imageUrl;
+    this._id = id;
   }
   save() {
+    if (this._id) {
+      // update
+      const db = mongoConnect
+        .getDB()
+        .updateOne({ _id: new mongodb.ObjectId(this._id) }, { $set: this });
+      //$set 으로 option을 줄수 있음, 어떻게 업데이트 할건지, 현재는 this 자체를 save하기에 this를 모두 다시 저장하는 로직
+      return;
+    }
     const db = mongoConnect.getDB();
     return db
       .collection("products")

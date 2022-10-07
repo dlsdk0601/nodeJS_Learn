@@ -102,15 +102,6 @@ const getProduct = (req, res) => {
       });
     })
     .catch((err) => console.log(err));
-  // Product.findByPk(prodId)
-  //   .then((product) => {
-  //     res.render("shop/product-detail", {
-  //       prd: product.dataValues,
-  //       pageTitle: product.dataValues.title,
-  //       path: "/products",
-  //     });
-  //   })
-  //   .catch((err) => console.log(err));
 };
 
 const postCartDeleteProduct = (req, res) => {
