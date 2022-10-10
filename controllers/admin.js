@@ -1,4 +1,7 @@
+import mongodb from "mongodb";
 import Product from "../models/product.js";
+
+const ObjectId = mongodb.ObjectId;
 
 const getAddProduct = (_, res) => {
   // html::::::::::::::::::::::::::::::::::::::::::
@@ -69,14 +72,15 @@ const getProducts = (req, res) => {
 const postEditProduct = (req, res) => {
   const { productId, title, imageUrl, price, description } = req.body;
 
-  Product.findByPk(productId)
-    .then((product) => {
-      product.title = title;
-      product.imageUrl = imageUrl;
-      product.description = description;
-      product.price = price;
-      return product.save();
-    })
+  const product = new Product(
+    title,
+    price,
+    description,
+    imageUrl,
+    new ObjectId(productId)
+  );
+  product
+    .save()
     .then((result) => {
       res.redirect("/admin/products");
     })
