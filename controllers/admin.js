@@ -1,8 +1,6 @@
 import mongodb from "mongodb";
 import Product from "../models/product.js";
 
-const ObjectId = mongodb.ObjectId;
-
 const getAddProduct = (_, res) => {
   // html::::::::::::::::::::::::::::::::::::::::::
   // res.sendFile(
@@ -23,18 +21,15 @@ const getEditProduct = (req, res) => {
   if (!editMode) {
     return res.redirect("/");
   }
-
   const prodId = req.params.productId;
-  console.log("prodId");
-  console.log(prodId);
   Product.findById(prodId)
     .then((product) => {
-      console.log("product---");
-      console.log(product);
       if (!product) {
         return res.redirect("/");
       }
 
+      console.log("product===");
+      console.log(product);
       res.render("admin/edit-product", {
         pageTitle: "edit-product",
         path: "/admin/products",
@@ -72,13 +67,7 @@ const getProducts = (req, res) => {
 const postEditProduct = (req, res) => {
   const { productId, title, imageUrl, price, description } = req.body;
 
-  const product = new Product(
-    title,
-    price,
-    description,
-    imageUrl,
-    new ObjectId(productId)
-  );
+  const product = new Product(title, price, description, imageUrl, productId);
   product
     .save()
     .then((result) => {
