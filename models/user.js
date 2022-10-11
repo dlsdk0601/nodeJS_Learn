@@ -1,15 +1,22 @@
-import Sequelize from "sequelize";
-import db from "../utils/databse.js";
+import mongodb from "mongodb";
+import mongoConnect from "../utils/databse";
 
-const User = db.define("user", {
-  id: {
-    type: Sequelize.INTEGER,
-    autoIncrement: true,
-    allowNull: false,
-    primaryKey: true,
-  },
-  name: Sequelize.STRING,
-  email: Sequelize.STRING,
-});
+const ObjectId = mongodb.ObjectId;
+class User {
+  constructor(userName, email) {
+    this.name = userName;
+    this.email = email;
+  }
+
+  save() {
+    const db = mongoConnect.getDB();
+    return db.collection("users").insertOne(this);
+  }
+
+  static findById(userId) {
+    const db = mongoConnect.getDB();
+    return db.collection("users").find({ _id: new ObjectId(userId) });
+  }
+}
 
 export default User;
