@@ -78,10 +78,7 @@ const postEditProduct = (req, res) => {
 
 const postDeleteProduct = (req, res) => {
   const prodId = req.body.productId;
-  Product.findByPk(prodId)
-    .then((product) => {
-      return product.destroy();
-    })
+  Product.deleteById(prodId)
     .then((result) => {
       res.redirect("/admin/products");
     })
