@@ -1,4 +1,4 @@
-import mongodb from "mongoose";
+import mongodb from "mongodb";
 import mongoConnect from "../utils/databse.js";
 
 class Product {
@@ -7,25 +7,27 @@ class Product {
     this.price = price;
     this.description = description;
     this.imageUrl = imageUrl;
-    this._id = id;
+    this._id = new mongodb.ObjectId(id);
   }
   save() {
+    const db = mongoConnect.getDB();
+    let dbOp;
     if (this._id) {
       // update
-      const db = mongoConnect
-        .getDB()
-        .updateOne({ _id: new mongodb.ObjectId(this._id) }, { $set: this });
+      dbOp = db
+        .collection("products")
+        .updateOne({ _id: this._id }, { $set: this });
       //$set 으로 option을 줄수 있음, 어떻게 업데이트 할건지, 현재는 this 자체를 save하기에 this를 모두 다시 저장하는 로직
-      return;
+    } else {
+      dbOp = db
+        .collection("products")
+        .insertOne(this)
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((err) => console.log(err));
     }
-    const db = mongoConnect.getDB();
-    return db
-      .collection("products")
-      .insertOne(this)
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => console.log(err));
+    return dbOp;
   }
 
   static fetchAll() {
