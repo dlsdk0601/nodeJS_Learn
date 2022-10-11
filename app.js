@@ -4,6 +4,7 @@ import path from "path";
 import errorPage from "./controllers/error.js";
 import api from "./routes/index.js";
 import db from "./utils/databse.js";
+import User from "./models/user";
 
 const app = express();
 
@@ -22,6 +23,14 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // express.static 정적으로 서비스하기 원하는 폴더 경로를 입력하면 된다. (바로 읽기 권한은 허용하고자하는 폴더)
 // 이제 .css나 .js파일을 찾으려할때는 자동으로 public 폴더로 포워딩한다.
 app.use(express.static(path.join(__dirname, "public")));
+
+app.use((req, res) => {
+  User.findById(1)
+    .then((user) => {
+      req.user = user;
+    })
+    .catch((err) => console.log(err));
+});
 
 // router 순서가 매우 중요하기에, 잘 고려해서 순서대로 작성할것.
 app.use(api);
