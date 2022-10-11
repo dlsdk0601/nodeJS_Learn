@@ -34,5 +34,5 @@ app.use(errorPage.get404);
 // 이제부터 mongodb 시작
 
 db.mongoConnect((client) => {
-  app.listen(3000);
+  app.listen(3000, () => console.log("connect!!::::::::::::::::"));
 });
