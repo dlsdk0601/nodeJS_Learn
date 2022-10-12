@@ -4,7 +4,7 @@ import path from "path";
 import errorPage from "./controllers/error.js";
 import api from "./routes/index.js";
 import db from "./utils/databse.js";
-import User from "./models/user";
+import User from "./models/user.js";
 
 const app = express();
 
@@ -24,10 +24,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // 이제 .css나 .js파일을 찾으려할때는 자동으로 public 폴더로 포워딩한다.
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use((req, res) => {
-  User.findById(1)
+app.use((req, res, next) => {
+  User.findById("62ffa791a32d81e23d2ecf80")
     .then((user) => {
-      req.user = user;
+      req.user = new User(user.name, user.email, user.cart, user._id);
+      next();
     })
     .catch((err) => console.log(err));
 });
