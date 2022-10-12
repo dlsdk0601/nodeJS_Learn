@@ -13,7 +13,6 @@ const mongoConnect = (callBck) => {
       `mongodb+srv://dlsdk0601:${process.env.MONGODB_PASSWOR}@portfolio.dacwcma.mongodb.net/test`
     )
     .then((result) => {
-      console.log("connect:::::::::::::::::::::::::::::::");
       _db = result.db();
       callBck(result);
     })
