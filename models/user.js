@@ -18,12 +18,25 @@ class User {
 
   addToCart(product) {
     // -1이 나오면 없는 상품
-    // const cartProduct = this.cart.items.findIndex(
-    //   (item) => item._id === product._id
-    // );
+    let quantity = 1;
+    const updateCartItem = [...this.cart.items];
+    const cartProductIndex = this.cart.items.findIndex(
+      (item) => item._id.toString() === product._id.toString()
+    );
+
+    // 이미 장바구니에 존재
+    if (cartProductIndex >= 0) {
+      quantity = this.cart.items[cartProductIndex].quantity + 1;
+      updateCartItem[cartProductIndex].quantity = quantity;
+    } else {
+      updateCartItem.push({
+        productId: new ObjectId(product._id),
+        quantity,
+      });
+    }
     const db = mongoConnect.getDB();
     const updateCart = {
-      items: [{ productId: new ObjectId(product._id), quantity: 1 }],
+      items: updateCartItem,
     };
     return db
       .collection("users")
