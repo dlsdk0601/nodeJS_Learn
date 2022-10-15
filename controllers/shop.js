@@ -27,17 +27,12 @@ const getIndex = (_, res) => {
 const getCart = (req, res) => {
   req.user
     .getCart()
-    .then((cart) => {
-      return cart
-        .getProducts()
-        .then((products) => {
-          res.render("shop/cart", {
-            pageTitle: "Your Cart",
-            path: "/cart",
-            products,
-          });
-        })
-        .catch((err) => console.log(err));
+    .then((products) => {
+      res.render("shop/cart", {
+        pageTitle: "Your Cart",
+        path: "/cart",
+        products,
+      });
     })
     .catch((err) => console.log(err));
 };
@@ -49,6 +44,7 @@ const postCart = (req, res) => {
     .then((product) => {
       return req.user.addToCart(product);
     })
+    .then(() => res.redirect("/cart"))
     .catch((err) => console.log(err));
 
   // let fetchedCart;
