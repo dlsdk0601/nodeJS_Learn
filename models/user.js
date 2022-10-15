@@ -20,9 +20,14 @@ class User {
     // -1이 나오면 없는 상품
     let quantity = 1;
     const updateCartItem = [...this.cart.items];
-    const cartProductIndex = this.cart.items.findIndex(
-      (item) => item._id.toString() === product._id.toString()
-    );
+    const cartProductIndex = this.cart.items.findIndex((item) => {
+      console.log(item._id.toString());
+      console.log(product._id.toString());
+      return item._id.toString() === product._id.toString();
+    });
+
+    console.log("cartProductIndex==");
+    console.log(cartProductIndex);
 
     // 이미 장바구니에 존재
     if (cartProductIndex >= 0) {
@@ -30,7 +35,7 @@ class User {
       updateCartItem[cartProductIndex].quantity = quantity;
     } else {
       updateCartItem.push({
-        productId: new ObjectId(product._id),
+        _id: new mongodb.ObjectId(product._id),
         quantity,
       });
     }
@@ -44,6 +49,29 @@ class User {
         { _id: new ObjectId(this._id) },
         { $set: { cart: updateCart } }
       );
+  }
+
+  getCart() {
+    const db = mongoConnect.getDB();
+
+    const productIds = this.cart.items.map((item) => item._id);
+
+    // find로 하나의 상품만 찾는게 아니라, $in을 사용하여 id가 모인 배열들 통해 모든 상품을 다 찾음
+    return db
+      .collection("products")
+      .find({ _id: { $in: productIds } })
+      .toArray()
+      .then((products) => {
+        return products.map((product) => {
+          return {
+            ...product,
+            quantity: this.cart.items.find(
+              (item) => item._id.toString() === product._id.toString()
+            ).quantity,
+          };
+        });
+      })
+      .catch((err) => console.log(err));
   }
 
   static findById(userId) {
