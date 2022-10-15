@@ -50,7 +50,7 @@ const postCart = (req, res) => {
 
 const getOrders = (req, res) => {
   req.user
-    .getOrders({ include: ["products"] })
+    .getOrders()
     .then((orders) => {
       res.render("shop/orders", {
         orders,
@@ -85,7 +85,6 @@ const postCartDeleteProduct = (req, res) => {
 };
 
 const postOrder = (req, res) => {
-  let fetchedCart;
   req.user
     .addOrder()
     .then((cart) => {
