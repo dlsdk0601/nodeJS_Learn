@@ -74,6 +74,19 @@ class User {
       .catch((err) => console.log(err));
   }
 
+  deleteItemFromCart(_id) {
+    const db = mongoConnect.getDB();
+    const updateCartItems = this.cart.items.filter(
+      (item) => item._id.toString() !== _id.toString()
+    );
+    return db.collection("users").updateOne(
+      {
+        _id: new ObjectId(this._id),
+      },
+      { $set: { cart: { items: updateCartItems } } }
+    );
+  }
+
   static findById(userId) {
     const db = mongoConnect.getDB();
     return db
