@@ -21,13 +21,8 @@ class User {
     let quantity = 1;
     const updateCartItem = [...this.cart.items];
     const cartProductIndex = this.cart.items.findIndex((item) => {
-      console.log(item._id.toString());
-      console.log(product._id.toString());
       return item._id.toString() === product._id.toString();
     });
-
-    console.log("cartProductIndex==");
-    console.log(cartProductIndex);
 
     // 이미 장바구니에 존재
     if (cartProductIndex >= 0) {
@@ -85,6 +80,22 @@ class User {
       },
       { $set: { cart: { items: updateCartItems } } }
     );
+  }
+
+  addOrder() {
+    const db = mongoConnect.getDB();
+    return db
+      .collection("orders")
+      .insertOne(this.cart)
+      .then((result) => {
+        this.cart = { item: [] };
+        return db
+          .collection("users")
+          .updateOne(
+            { _id: new ObjectId(this._id) },
+            { $set: { cart: this.cart } }
+          );
+      });
   }
 
   static findById(userId) {
