@@ -48,7 +48,6 @@ class User {
 
   getCart() {
     const db = mongoConnect.getDB();
-
     const productIds = this.cart.items.map((item) => item._id);
 
     // find로 하나의 상품만 찾는게 아니라, $in을 사용하여 id가 모인 배열들 통해 모든 상품을 다 찾음
@@ -84,11 +83,19 @@ class User {
 
   addOrder() {
     const db = mongoConnect.getDB();
-    return db
-      .collection("orders")
-      .insertOne(this.cart)
+    return this.getCart()
+      .then((products) => {
+        const order = {
+          items: products,
+          user: {
+            _id: new ObjectId(this._id),
+            name: this.name,
+          },
+        };
+        return db.collection("orders").insertOne(order);
+      })
       .then((result) => {
-        this.cart = { item: [] };
+        this.cart = { items: [] };
         return db
           .collection("users")
           .updateOne(
@@ -96,6 +103,14 @@ class User {
             { $set: { cart: this.cart } }
           );
       });
+  }
+
+  getOrders() {
+    const db = mongoConnect.getDB();
+    return db
+      .collection("orders")
+      .find({ "user._id": new ObjectId(this._id) }) // orders 모델안에 user값이 있고 그안에 _id가 있기때문에, "" 안에 경로 처럼 적어줘야함
+      .toArray();
   }
 
   static findById(userId) {
