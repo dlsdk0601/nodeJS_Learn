@@ -1,72 +1,94 @@
-import mongodb from "mongodb";
-import mongoConnect from "../utils/databse.js";
+import mongoose from "mongoose";
 
-class Product {
-  constructor(title, price, description, imageUrl, id, userId) {
-    this.title = title;
-    this.price = price;
-    this.description = description;
-    this.imageUrl = imageUrl;
-    this._id = id ? new mongodb.ObjectId(id) : null;
-    this.userId = userId;
-  }
-  save() {
-    const db = mongoConnect.getDB();
-    let dbOp;
-    if (this._id) {
-      // update
-      dbOp = db
-        .collection("products")
-        .updateOne({ _id: this._id }, { $set: this });
-      //$set 으로 option을 줄수 있음, 어떻게 업데이트 할건지, 현재는 this 자체를 save하기에 this를 모두 다시 저장하는 로직
-    } else {
-      dbOp = db
-        .collection("products")
-        .insertOne(this)
-        .then((res) => {
-          console.log(res);
-        })
-        .catch((err) => console.log(err));
-    }
-    return dbOp;
-  }
+const Schema = mongoose.Schema;
 
-  static fetchAll() {
-    const db = mongoConnect.getDB();
-    return db
-      .collection("products")
-      .find()
-      .toArray()
-      .then((products) => {
-        return products;
-      })
-      .catch((err) => console.log(err));
-  }
+const productSchema = new Schema({
+  title: {
+    typs: String,
+    require: true,
+  },
+  price: {
+    type: Number,
+    require: true,
+  },
+  description: {
+    type: String,
+    require: true,
+  },
+  imageUrl: {
+    type: String,
+    require: true,
+  },
+});
 
-  static findById(prodId) {
-    const db = mongoConnect.getDB();
-    return db
-      .collection("products")
-      .find({ _id: new mongodb.ObjectId(prodId) })
-      .next()
-      .then((product) => {
-        return product;
-      })
-      .catch((err) => console.log(err));
-  }
+// mongoDB without mongoose:::::::::::::::::::::::::::::::
+// class Product {
+//   constructor(title, price, description, imageUrl, id, userId) {
+//     this.title = title;
+//     this.price = price;
+//     this.description = description;
+//     this.imageUrl = imageUrl;
+//     this._id = id ? new mongodb.ObjectId(id) : null;
+//     this.userId = userId;
+//   }
+//   save() {
+//     const db = mongoConnect.getDB();
+//     let dbOp;
+//     if (this._id) {
+//       // update
+//       dbOp = db
+//         .collection("products")
+//         .updateOne({ _id: this._id }, { $set: this });
+//       //$set 으로 option을 줄수 있음, 어떻게 업데이트 할건지, 현재는 this 자체를 save하기에 this를 모두 다시 저장하는 로직
+//     } else {
+//       dbOp = db
+//         .collection("products")
+//         .insertOne(this)
+//         .then((res) => {
+//           console.log(res);
+//         })
+//         .catch((err) => console.log(err));
+//     }
+//     return dbOp;
+//   }
 
-  static deleteById(prodId) {
-    const db = mongoConnect.getDB();
-    return db
-      .collection("products")
-      .deleteOne({ _id: new mongodb.ObjectId(prodId) })
-      .then((result) => {
-        console.log(result);
-      })
-      .catch((err) => console.log(err));
-  }
-}
+//   static fetchAll() {
+//     const db = mongoConnect.getDB();
+//     return db
+//       .collection("products")
+//       .find()
+//       .toArray()
+//       .then((products) => {
+//         return products;
+//       })
+//       .catch((err) => console.log(err));
+//   }
 
+//   static findById(prodId) {
+//     const db = mongoConnect.getDB();
+//     return db
+//       .collection("products")
+//       .find({ _id: new mongodb.ObjectId(prodId) })
+//       .next()
+//       .then((product) => {
+//         return product;
+//       })
+//       .catch((err) => console.log(err));
+//   }
+
+//   static deleteById(prodId) {
+//     const db = mongoConnect.getDB();
+//     return db
+//       .collection("products")
+//       .deleteOne({ _id: new mongodb.ObjectId(prodId) })
+//       .then((result) => {
+//         console.log(result);
+//       })
+//       .catch((err) => console.log(err));
+//   }
+// }
+
+// sequelize::::::::::::::::::::::::::::::::::::::::::::::::
 // const Product = sequelize.define("product", {
 //   id: {
 //     type: INTEGER,
