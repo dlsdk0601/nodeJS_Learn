@@ -3,8 +3,11 @@ import bodyParser from "body-parser";
 import path from "path";
 import errorPage from "./controllers/error.js";
 import api from "./routes/index.js";
-import db from "./utils/databse.js";
+import mongoose from "mongoose";
 import User from "./models/user.js";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const app = express();
 
@@ -41,8 +44,16 @@ app.use(errorPage.get404);
 
 // sequelize와 관련된 명령어 모두 지움
 
-// 이제부터 mongodb 시작
+// 이제부터 mongoose 시작
 
-db.mongoConnect((client) => {
-  app.listen(3000, () => console.log("connect!!::::::::::::::::"));
-});
+// db.mongoConnect((client) => {
+//   app.listen(3000, () => console.log("connect!!::::::::::::::::"));
+// });
+mongoose
+  .connect(
+    `mongodb+srv://dlsdk0601:${process.env.MONGODB_PASSWOR}@portfolio.dacwcma.mongodb.net/?retryWrites=true&w=majority`
+  )
+  .then(() => {
+    app.listen(3000, () => console.log("connect:::::::::::::::::::::::"));
+  })
+  .catch((err) => console.log(err));
