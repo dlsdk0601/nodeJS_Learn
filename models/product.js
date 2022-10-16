@@ -4,22 +4,26 @@ const Schema = mongoose.Schema;
 
 const productSchema = new Schema({
   title: {
-    typs: String,
-    require: true,
+    type: String,
+    required: true,
   },
   price: {
     type: Number,
-    require: true,
+    required: true,
   },
   description: {
     type: String,
-    require: true,
+    required: true,
   },
   imageUrl: {
     type: String,
-    require: true,
+    required: true,
   },
 });
+
+// mongoose의 model을 export해서 mongoose가 스키마 연결하는걸 도와준다
+const Product = mongoose.model("Product", productSchema);
+export default Product;
 
 // mongoDB without mongoose:::::::::::::::::::::::::::::::
 // class Product {
@@ -111,4 +115,4 @@ const productSchema = new Schema({
 //   },
 // });
 
-export default Product;
+// export default Product;
