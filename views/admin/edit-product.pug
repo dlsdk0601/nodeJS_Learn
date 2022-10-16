@@ -21,7 +21,7 @@ block content
                     input(type="number", name="price", value=(product.price))#price
                 .form-control 
                     label(for="description") Description 
-                    textarea(row="5", name="description", value=(product.description))#description
+                    textarea(row="5", name="description")#description #{product.description}
                 input(type="hidden" value=(product._id) name="productId")
                 button.btn(type="submit") Edit Product
         else 
