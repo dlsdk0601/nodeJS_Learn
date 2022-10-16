@@ -19,6 +19,10 @@ const productSchema = new Schema({
     type: String,
     required: true,
   },
+  userId: {
+    type: Schema.Types.ObjectId,
+    ref: "User", // reference 참조하고 싶은 model의 이름을 적는다. user.js로 가면 mongoose.model("User", userSchema)에서 User라는 이름으로 정의했다
+  },
 });
 
 // mongoose의 model을 export해서 mongoose가 스키마 연결하는걸 도와준다
