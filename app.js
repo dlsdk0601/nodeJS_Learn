@@ -4,7 +4,7 @@ import path from "path";
 import errorPage from "./controllers/error.js";
 import api from "./routes/index.js";
 import mongoose from "mongoose";
-// import User from "./models/user.js";
+import User from "./models/user.js";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -27,14 +27,14 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // 이제 .css나 .js파일을 찾으려할때는 자동으로 public 폴더로 포워딩한다.
 app.use(express.static(path.join(__dirname, "public")));
 
-// app.use((req, res, next) => {
-//   User.findById("62ffa791a32d81e23d2ecf80")
-//     .then((user) => {
-//       req.user = new User(user.name, user.email, user.cart, user._id);
-//       next();
-//     })
-//     .catch((err) => console.log(err));
-// });
+app.use((req, res, next) => {
+  User.findById("634c2663f1c2db98d820c0bb")
+    .then((user) => {
+      req.user = user;
+      next();
+    })
+    .catch((err) => console.log(err));
+});
 
 // router 순서가 매우 중요하기에, 잘 고려해서 순서대로 작성할것.
 app.use(api);
@@ -42,18 +42,24 @@ app.use(api);
 // 404 error
 app.use(errorPage.get404);
 
-// sequelize와 관련된 명령어 모두 지움
-
 // 이제부터 mongoose 시작
-
-// db.mongoConnect((client) => {
-//   app.listen(3000, () => console.log("connect!!::::::::::::::::"));
-// });
 mongoose
   .connect(
     `mongodb+srv://dlsdk0601:${process.env.MONGODB_PASSWOR}@portfolio.dacwcma.mongodb.net/shop?retryWrites=true&w=majority`
   )
   .then(() => {
+    User.findOne().then((user) => {
+      if (!user) {
+        const user = new User({
+          name: "admin",
+          email: "admin@naver.com",
+          cart: {
+            item: [],
+          },
+        });
+        user.save();
+      }
+    });
     app.listen(3000, () => console.log("connect:::::::::::::::::::::::"));
   })
   .catch((err) => console.log(err));
