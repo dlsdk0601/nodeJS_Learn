@@ -1,7 +1,7 @@
 import Product from "../models/product.js";
 
 const getProducts = (_, res) => {
-  Product.fetchAll()
+  Product.find()
     .then((products) => {
       res.render("shop/product-list", {
         prods: products,
@@ -13,7 +13,7 @@ const getProducts = (_, res) => {
 };
 
 const getIndex = (_, res) => {
-  Product.fetchAll()
+  Product.find()
     .then((products) => {
       res.render("shop/index", {
         prods: products,
@@ -63,11 +63,12 @@ const getOrders = (req, res) => {
 
 const getProduct = (req, res) => {
   const prodId = req.params.productId;
+  // mongoose에 findById라는 함수가 내장돼잇음
   Product.findById(prodId)
     .then((product) => {
       res.render("shop/product-detail", {
-        prd: product.dataValues,
-        pageTitle: product.dataValues.title,
+        prd: product,
+        pageTitle: product.title,
         path: "/products",
       });
     })
