@@ -26,8 +26,9 @@ const getIndex = (_, res) => {
 
 const getCart = (req, res) => {
   req.user
-    .getCart()
-    .then((products) => {
+    .populate("cart.items.productId") // cart 객체를 반환한다.
+    .then((user) => {
+      const products = [...user.cart.items];
       res.render("shop/cart", {
         pageTitle: "Your Cart",
         path: "/cart",
@@ -39,7 +40,6 @@ const getCart = (req, res) => {
 
 const postCart = (req, res) => {
   const prodId = req.body.productId;
-
   Product.findById(prodId)
     .then((product) => {
       return req.user.addToCart(product);
@@ -78,7 +78,7 @@ const getProduct = (req, res) => {
 const postCartDeleteProduct = (req, res) => {
   const prodId = req.body.productId;
   req.user
-    .deleteItemFromCart(prodId)
+    .removeFromCart(prodId)
     .then(() => {
       res.redirect("/cart");
     })
