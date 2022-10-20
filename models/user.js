@@ -53,17 +53,17 @@ userSchema.methods.addToCart = function (product) {
 
 userSchema.methods.removeFromCart = function (productId) {
   const updateCartItems = this.cart.items.filter((item) => {
-    console.log("item==");
-    console.log(item);
-    console.log("productId==");
-    console.log(productId);
     return item.productId.toString() !== productId.toString();
   });
 
-  console.log("updateCartItems===");
-  console.log(updateCartItems);
-
   this.cart.items = updateCartItems;
+  return this.save();
+};
+
+userSchema.methods.clearCart = function () {
+  this.cart = {
+    items: [],
+  };
   return this.save();
 };
 
