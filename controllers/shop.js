@@ -1,4 +1,5 @@
 import Product from "../models/product.js";
+import Order from "../models/order.js";
 
 const getProducts = (_, res) => {
   Product.find()
@@ -49,9 +50,10 @@ const postCart = (req, res) => {
 };
 
 const getOrders = (req, res) => {
-  req.user
-    .getOrders()
+  Order.find({ "user.userId": req.user._id })
     .then((orders) => {
+      console.log("orders--");
+      console.log(orders[0].products);
       res.render("shop/orders", {
         orders,
         pageTitle: "Your Orders",
@@ -87,8 +89,25 @@ const postCartDeleteProduct = (req, res) => {
 
 const postOrder = (req, res) => {
   req.user
-    .addOrder()
-    .then((cart) => {
+    .populate("cart.items.productId")
+    .then((user) => {
+      const products = user.cart.items.map((item) => {
+        return { quantity: item.quantity, productData: { ...item.productId } };
+      });
+      const order = new Order({
+        user: {
+          name: req.user.name,
+          userId: req.user, // user 전체를 넘기면 mongoose가 Id를 받아온다.
+        },
+        products,
+      });
+
+      return order.save();
+    })
+    .then(() => {
+      return req.user.clearCart();
+    })
+    .then(() => {
       res.redirect("/orders");
     })
     .catch((err) => console.log(err));
