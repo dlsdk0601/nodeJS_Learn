@@ -11,6 +11,7 @@ const getAddProduct = (_, res) => {
     pageTitle: "add-product",
     path: "/admin/add-product",
     editing: false,
+    isAuthenticated: req.isAuthenticated,
   });
 };
 
@@ -34,6 +35,7 @@ const getEditProduct = (req, res) => {
         path: "/admin/products",
         editing: true,
         product,
+        isAuthenticated: req.isAuthenticated,
       });
     })
     .catch((err) => console.log(err));
@@ -67,6 +69,7 @@ const getProducts = (req, res) => {
         prods: products,
         pageTitle: "Admin Products",
         path: "/admin/products",
+        isAuthenticated: req.isAuthenticated,
       });
     })
     .catch((err) => console.log(err));

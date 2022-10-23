@@ -1,25 +1,27 @@
 import Product from "../models/product.js";
 import Order from "../models/order.js";
 
-const getProducts = (_, res) => {
+const getProducts = (req, res) => {
   Product.find()
     .then((products) => {
       res.render("shop/product-list", {
         prods: products,
         pageTitle: "Shop",
         path: "/products",
+        isAuthenticated: req.isAuthenticated,
       });
     })
     .catch((err) => console.log(err));
 };
 
-const getIndex = (_, res) => {
+const getIndex = (req, res) => {
   Product.find()
     .then((products) => {
       res.render("shop/index", {
         prods: products,
         pageTitle: "Shop",
         path: "/",
+        isAuthenticated: req.isAuthenticated,
       });
     })
     .catch((err) => console.log(err));
@@ -34,6 +36,7 @@ const getCart = (req, res) => {
         pageTitle: "Your Cart",
         path: "/cart",
         products,
+        isAuthenticated: req.isAuthenticated,
       });
     })
     .catch((err) => console.log(err));
@@ -56,6 +59,7 @@ const getOrders = (req, res) => {
         orders,
         pageTitle: "Your Orders",
         path: "/orders",
+        isAuthenticated: req.isAuthenticated,
       });
     })
     .catch((err) => console.log(err));
@@ -70,6 +74,7 @@ const getProduct = (req, res) => {
         prd: product,
         pageTitle: product.title,
         path: "/products",
+        isAuthenticated: req.isAuthenticated,
       });
     })
     .catch((err) => console.log(err));
