@@ -52,8 +52,6 @@ const postCart = (req, res) => {
 const getOrders = (req, res) => {
   Order.find({ "user.userId": req.user._id })
     .then((orders) => {
-      console.log("orders--");
-      console.log(orders[0].products);
       res.render("shop/orders", {
         orders,
         pageTitle: "Your Orders",
