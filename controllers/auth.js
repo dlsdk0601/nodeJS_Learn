@@ -1,6 +1,7 @@
 const getLogin = (req, res) => {
-  console.log(req.get("Cookie"));
-  const isLoggedIn = req.get("Cookie").trim().split("=")[1];
+  const isLoggedIn = req.get("Cookie")
+    ? req.get("Cookie").trim().split("=")[1]
+    : undefined;
   res.render("auth/login", {
     path: "/login",
     pageTitle: "login",
@@ -22,7 +23,14 @@ const postLogin = (req, res) => {
   // 이때 글로벌 변수를 사용하면 되는데, 이를 프론트에도 사용하기 위해 쿠키를 사용하는게 좋다.
 
   // key-value 처럼 설정
-  res.setHeader("Set-Cookie", "loggedIn=true");
+  // res.setHeader("Set-Cookie", "loggedIn=true");
+
+  // 이렇게 옵션 값들을 넣어서 셋팅 가능 Max-Age는 유효시간으로 초 단위로 적는다.
+  // res.setHeader("Set-Cookie", "loggedIn=true; Max-Age=10;");
+
+  // https 통신에서만 설정된다
+  res.setHeader("Set-Cookie", "loggedIn=true; Secure;");
+
   res.redirect("/");
 };
 
