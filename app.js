@@ -6,6 +6,7 @@ import api from "./routes/index.js";
 import mongoose from "mongoose";
 import User from "./models/user.js";
 import dotenv from "dotenv";
+import session from "express-session";
 
 dotenv.config();
 
@@ -26,6 +27,20 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // express.static 정적으로 서비스하기 원하는 폴더 경로를 입력하면 된다. (바로 읽기 권한은 허용하고자하는 폴더)
 // 이제 .css나 .js파일을 찾으려할때는 자동으로 public 폴더로 포워딩한다.
 app.use(express.static(path.join(__dirname, "public")));
+
+// ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+// seesion 함수에 객체를 넣는데, 세션 설정에 들어갈 값들로 구성한 객체이다.
+
+// secret같은 경우 ID를 비밀리에 쿠키에 저장하는 해시를 등록 할때 사용된다.
+// 토큰 같은 값을 넣어야하나, 여기서는 짧게 쓴다.
+
+// resave는 세션이 완료되는 모든 요청마다(그냥 모든 요청) 저장시키는게 아니라
+// 세션이 변경되었을때만 저장 시키는 옵션 (false을 넣어야 그렇게됨)
+
+// saveUninitialized은 저장할 필요가 없는 요청의 경우 변경된 내용이 없어서 아무 세션에서 저장되지 않도록한다.
+app.use(
+  session({ secret: "mySecret", resave: false, saveUninitialized: false })
+);
 
 app.use((req, res, next) => {
   User.findById("634c2663f1c2db98d820c0bb")
