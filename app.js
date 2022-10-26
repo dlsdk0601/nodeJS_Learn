@@ -7,10 +7,19 @@ import mongoose from "mongoose";
 import User from "./models/user.js";
 import dotenv from "dotenv";
 import session from "express-session";
+import mongoDBStore from "connect-mongodb-session";
 
 dotenv.config();
 
+const MONGODB_URI = `mongodb+srv://dlsdk0601:${process.env.MONGODB_PASSWOR}@portfolio.dacwcma.mongodb.net/shop?w=majority`;
+
 const app = express();
+
+const MongoDBStore = mongoDBStore(session);
+const store = new MongoDBStore({
+  uri: MONGODB_URI,
+  collection: "sessions", // 반드시 정의 해줘야하며, 이름은 아무렇게나 해도 무관
+});
 
 const __dirname = path.resolve();
 
@@ -39,7 +48,12 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // saveUninitialized은 저장할 필요가 없는 요청의 경우 변경된 내용이 없어서 아무 세션에서 저장되지 않도록한다.
 app.use(
-  session({ secret: "mySecret", resave: false, saveUninitialized: false })
+  session({
+    secret: "mySecret",
+    resave: false,
+    saveUninitialized: false,
+    store: store,
+  })
 );
 
 app.use((req, res, next) => {
@@ -59,9 +73,7 @@ app.use(errorPage.get404);
 
 // 이제부터 mongoose 시작
 mongoose
-  .connect(
-    `mongodb+srv://dlsdk0601:${process.env.MONGODB_PASSWOR}@portfolio.dacwcma.mongodb.net/shop?retryWrites=true&w=majority`
-  )
+  .connect(MONGODB_URI)
   .then(() => {
     User.findOne().then((user) => {
       if (!user) {
