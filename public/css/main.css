@@ -52,9 +52,15 @@ form {
   padding: 0;
 }
 
-.main-header__item a {
+.main-header__item a,
+.main-header__item button {
   text-decoration: none;
   color: white;
+}
+
+.main-header__item button {
+  background: none;
+  border: none;
 }
 
 .main-header__item a:hover,
