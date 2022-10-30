@@ -1,12 +1,6 @@
 import Product from "../models/product.js";
 
-const getAddProduct = (_, res) => {
-  // html::::::::::::::::::::::::::::::::::::::::::
-  // res.sendFile(
-  //   path.join(__dirname, "../", "views", "admin", "add-product.pug")
-  // );
-
-  // pug::::::::::::::::::::::::::::::::::::::::::
+const getAddProduct = (req, res) => {
   res.render("admin/edit-product", {
     pageTitle: "add-product",
     path: "/admin/add-product",
@@ -28,8 +22,6 @@ const getEditProduct = (req, res) => {
         return res.redirect("/");
       }
 
-      console.log("product");
-      console.log(product);
       res.render("admin/edit-product", {
         pageTitle: "edit-product",
         path: "/admin/products",
