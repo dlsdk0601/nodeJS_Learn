@@ -34,4 +34,12 @@ const postLogout = (req, res) => {
   });
 };
 
-export default { getLogin, postLogin, postLogout };
+const getSignUp = (req, res) => {
+  res.render("auth/signup", {
+    path: "/signup",
+    pageTitle: "signup",
+    isAuthenticated: req.session.isLogged,
+  });
+};
+
+export default { getLogin, postLogin, postLogout, getSignUp };
