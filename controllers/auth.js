@@ -42,4 +42,24 @@ const getSignUp = (req, res) => {
   });
 };
 
-export default { getLogin, postLogin, postLogout, getSignUp };
+const postSignUp = (req, res) => {
+  const {
+    body: { email, password, confirmPassword },
+  } = req;
+
+  User.findOne({ email })
+    .then((user) => {
+      if (user) {
+        return res.redirect("/signup");
+      }
+
+      const newUser = new User({ email, password, cart: { items: [] } });
+      return newUser.save();
+    })
+    .then((result) => {
+      res.redirect("/login");
+    })
+    .catch((err) => console.log(err));
+};
+
+export default { getLogin, postLogin, postLogout, getSignUp, postSignUp };
