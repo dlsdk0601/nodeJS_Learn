@@ -1,4 +1,5 @@
 import User from "../models/user.js";
+import bcrypt from "bcryptjs";
 
 const getLogin = (req, res) => {
   res.render("auth/login", {
@@ -52,12 +53,20 @@ const postSignUp = (req, res) => {
       if (user) {
         return res.redirect("/signup");
       }
-
-      const newUser = new User({ email, password, cart: { items: [] } });
-      return newUser.save();
-    })
-    .then((result) => {
-      res.redirect("/login");
+      // bcrypt의 hash에 대해서는 더 자세한 설명이 있는 다른 프로젝트 참고
+      return bcrypt
+        .hash(password, 12)
+        .then((hashedPassword) => {
+          const newUser = new User({
+            email,
+            password: hashedPassword,
+            cart: { items: [] },
+          });
+          return newUser.save();
+        })
+        .then((result) => {
+          res.redirect("/login");
+        });
     })
     .catch((err) => console.log(err));
 };
