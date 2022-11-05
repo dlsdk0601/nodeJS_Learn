@@ -13,7 +13,6 @@ const postLogin = (req, res) => {
   const {
     body: { email, password },
   } = req;
-
   User.findOne({ email })
     .then((user) => {
       if (!user) {
@@ -61,6 +60,10 @@ const postSignUp = (req, res) => {
   const {
     body: { email, password, confirmPassword },
   } = req;
+
+  if (confirmPassword !== password) {
+    return res.redirect("/signup");
+  }
 
   User.findOne({ email })
     .then((user) => {
