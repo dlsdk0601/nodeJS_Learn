@@ -1,5 +1,6 @@
 import express from "express";
 import shopController from "../../controllers/shop.js";
+import isAuthHaldler from "../../middleware/is-auth.js";
 
 const shopRoutes = express.Router();
 
@@ -11,14 +12,18 @@ shopRoutes.get("/products", shopController.getProducts);
 
 shopRoutes.get("/products/:productId", shopController.getProduct);
 
-shopRoutes.get("/cart", shopController.getCart);
+shopRoutes.get("/cart", isAuthHaldler, shopController.getCart);
 
-shopRoutes.post("/cart-delete-item", shopController.postCartDeleteProduct);
+shopRoutes.post(
+  "/cart-delete-item",
+  isAuthHaldler,
+  shopController.postCartDeleteProduct
+);
 
-shopRoutes.post("/cart", shopController.postCart);
+shopRoutes.post("/cart", isAuthHaldler, shopController.postCart);
 
-shopRoutes.post("/create-order", shopController.postOrder);
+shopRoutes.post("/create-order", isAuthHaldler, shopController.postOrder);
 
-shopRoutes.get("/orders", shopController.getOrders);
+shopRoutes.get("/orders", isAuthHaldler, shopController.getOrders);
 
 export default shopRoutes;
