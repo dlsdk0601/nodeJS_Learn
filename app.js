@@ -23,7 +23,7 @@ const store = new MongoDBStore({
   collection: "sessions", // 반드시 정의 해줘야하며, 이름은 아무렇게나 해도 무관
 });
 
-const scrfProftection = csrf();
+const csrfProftection = csrf({});
 
 const __dirname = path.resolve();
 
@@ -59,6 +59,10 @@ app.use(
     store: store,
   })
 );
+
+// 로그아웃 할 때, postLogout 요청에도 토큰을 확인하나, 로그아웃이기에 토큰이 없다.
+// 그래서 view 단에 토큰을 input에 저장 시켜놓고 로그아웃할때 같이 보내야한다.
+app.use(csrfProftection);
 
 app.use((req, res, next) => {
   if (!req.session.user) {

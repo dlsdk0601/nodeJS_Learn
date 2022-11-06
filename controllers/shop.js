@@ -22,6 +22,7 @@ const getIndex = (req, res) => {
         pageTitle: "Shop",
         path: "/",
         isAuthenticated: req.session.isLogged,
+        csrfToken: req.csrfToken(), // csrfToken 매서드는 미들웨어에 의해 추가된다. app.js 참고
       });
     })
     .catch((err) => console.log(err));

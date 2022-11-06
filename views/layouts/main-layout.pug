@@ -37,5 +37,7 @@ html(lang="en")
                     else
                         li.main-header__item 
                             form(action="/logout", method="post")
+                                //-    input name을 _csrf로 하지 않으면, 라이브러리가 인지하지 못함
+                                input(type="hidden", name="_csrf", value=(csrfToken))
                                 button(type="submit") Logout
         block content
