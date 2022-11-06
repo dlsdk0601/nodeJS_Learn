@@ -8,6 +8,7 @@ import User from "./models/user.js";
 import dotenv from "dotenv";
 import session from "express-session";
 import mongoDBStore from "connect-mongodb-session";
+import csrf from "csurf";
 
 dotenv.config();
 
@@ -16,10 +17,13 @@ const MONGODB_URI = `mongodb+srv://dlsdk0601:${process.env.MONGODB_PASSWOR}@port
 const app = express();
 
 const MongoDBStore = mongoDBStore(session);
+
 const store = new MongoDBStore({
   uri: MONGODB_URI,
   collection: "sessions", // 반드시 정의 해줘야하며, 이름은 아무렇게나 해도 무관
 });
+
+const scrfProftection = csrf();
 
 const __dirname = path.resolve();
 
