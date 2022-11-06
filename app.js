@@ -76,6 +76,16 @@ app.use((req, res, next) => {
     .catch((err) => console.log(err));
 });
 
+app.use((req, res, next) => {
+  // csrf 토큰을 render할때 추가 해줘야하기에 모든 view단 route controller에 추가하면 복잡하니까,
+  // middleware로 한번에 처리해준다.
+
+  // view에만 존재하므로 local이라고 부른다.
+  res.locals.isAuthenticated = req.session.isLogged;
+  res.locals.csrfToken = req.csrfToken();
+  next();
+});
+
 // router 순서가 매우 중요하기에, 잘 고려해서 순서대로 작성할것.
 app.use(api);
 

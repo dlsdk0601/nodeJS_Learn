@@ -8,7 +8,6 @@ const getProducts = (req, res) => {
         prods: products,
         pageTitle: "Shop",
         path: "/products",
-        isAuthenticated: req.session.isLogged,
       });
     })
     .catch((err) => console.log(err));
@@ -21,7 +20,6 @@ const getIndex = (req, res) => {
         prods: products,
         pageTitle: "Shop",
         path: "/",
-        isAuthenticated: req.session.isLogged,
         csrfToken: req.csrfToken(), // csrfToken 매서드는 미들웨어에 의해 추가된다. app.js 참고
       });
     })
@@ -37,7 +35,6 @@ const getCart = (req, res) => {
         pageTitle: "Your Cart",
         path: "/cart",
         products,
-        isAuthenticated: req.session.isLogged,
       });
     })
     .catch((err) => console.log(err));
@@ -60,7 +57,6 @@ const getOrders = (req, res) => {
         orders,
         pageTitle: "Your Orders",
         path: "/orders",
-        isAuthenticated: req.session.isLogged,
       });
     })
     .catch((err) => console.log(err));
@@ -75,7 +71,6 @@ const getProduct = (req, res) => {
         prd: product,
         pageTitle: product.title,
         path: "/products",
-        isAuthenticated: req.session.isLogged,
       });
     })
     .catch((err) => console.log(err));

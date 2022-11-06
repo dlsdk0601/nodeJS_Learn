@@ -15,3 +15,4 @@ block content
             form(action="/cart", method="POST")
                 button(type="submit").btn Add to Cart
                 input(type="hidden", name="productId", value=(id))
+                input(type="hidden", name="_csrf", value=(csrfToken))
