@@ -95,7 +95,7 @@ const postOrder = (req, res) => {
       });
       const order = new Order({
         user: {
-          name: req.user.name,
+          email: req.user.email,
           userId: req.user, // user 전체를 넘기면 mongoose가 Id를 받아온다.
         },
         products,
