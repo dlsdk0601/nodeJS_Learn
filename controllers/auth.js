@@ -5,7 +5,7 @@ const getLogin = (req, res) => {
   res.render("auth/login", {
     path: "/login",
     pageTitle: "login",
-    isAuthenticated: req.session.isLogged,
+    errorMessage: req.flash("error"), // error에 저장돼있던 내용을 불러온다. 이 후에 정보는 세션에서 제거된다.
   });
 };
 
@@ -16,6 +16,8 @@ const postLogin = (req, res) => {
   User.findOne({ email })
     .then((user) => {
       if (!user) {
+        // flash 알림을 저장하는데 이때 key는 error로 하는데 사실 아무 이름 써도됨
+        req.flash("error", "Invlaid email or password.");
         return res.redirect("/login");
       }
       bcrypt
@@ -52,7 +54,6 @@ const getSignUp = (req, res) => {
   res.render("auth/signup", {
     path: "/signup",
     pageTitle: "signup",
-    isAuthenticated: req.session.isLogged,
   });
 };
 

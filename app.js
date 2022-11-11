@@ -9,6 +9,7 @@ import dotenv from "dotenv";
 import session from "express-session";
 import mongoDBStore from "connect-mongodb-session";
 import csrf from "csurf";
+import flash from "connect-flash";
 
 dotenv.config();
 
@@ -63,6 +64,11 @@ app.use(
 // 로그아웃 할 때, postLogout 요청에도 토큰을 확인하나, 로그아웃이기에 토큰이 없다.
 // 그래서 view 단에 토큰을 input에 저장 시켜놓고 로그아웃할때 같이 보내야한다.
 app.use(csrfProftection);
+
+// 로그인 실패를 예로 들어보면 에러 처리를 해야하는데, redirect의 경우 데이터 넘기는게 힘들어서
+// session을 활용하려한다. 이때 필요한 lib이 connect-flash 이다
+// 이는 세션을 초기화한 다음 해야하므로 session 미들웨어 이후에 작성한다.
+app.use(flash());
 
 app.use((req, res, next) => {
   if (!req.session.user) {
