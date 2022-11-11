@@ -9,6 +9,9 @@ block styles
 
 block content 
     main 
+        if errorMessage 
+                div.user-message.user-message--error #{errorMessage}
+
         form(class="login-form" action="/signup", method="post")
             .form-control 
                 label(for="email") E-Mail 
