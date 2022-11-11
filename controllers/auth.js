@@ -2,10 +2,15 @@ import User from "../models/user.js";
 import bcrypt from "bcryptjs";
 
 const getLogin = (req, res) => {
+  // error에 저장돼있던 내용을 불러온다. 이 후에 정보는 세션에서 제거된다.
+  // req.flash("error")는 한번이라도 호출되면 바로 삭제됨.
+  const error = req.flash("error");
+  const errorMessage = error.length > 0 ? error[0] : null;
+
   res.render("auth/login", {
     path: "/login",
     pageTitle: "login",
-    errorMessage: req.flash("error"), // error에 저장돼있던 내용을 불러온다. 이 후에 정보는 세션에서 제거된다.
+    errorMessage,
   });
 };
 
@@ -31,7 +36,7 @@ const postLogin = (req, res) => {
               res.redirect("/");
             });
           }
-
+          req.flash("error", "Invlaid email or password.");
           res.redirect("/login");
         })
         .catch((err) => {
@@ -51,9 +56,13 @@ const postLogout = (req, res) => {
 };
 
 const getSignUp = (req, res) => {
+  const error = req.flash("error");
+  const errorMessage = error.length > 0 ? error[0] : null;
+
   res.render("auth/signup", {
     path: "/signup",
     pageTitle: "signup",
+    errorMessage,
   });
 };
 
@@ -69,6 +78,7 @@ const postSignUp = (req, res) => {
   User.findOne({ email })
     .then((user) => {
       if (user) {
+        req.flash("error", "Email exists already.");
         return res.redirect("/signup");
       }
       // bcrypt의 hash에 대해서는 더 자세한 설명이 있는 다른 프로젝트 참고
