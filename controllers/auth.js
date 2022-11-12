@@ -147,6 +147,31 @@ const poetReset = (req, res) => {
     const token = buffer.toString("hex"); // buffer가 16진법 값을 저장하므로 hex를 파라미터로 넣어서, 일반 아스키 문자로 변환하라고 명명 해줘야한다.
     console.log("token===");
     console.log(token);
+
+    User.findOne({ email: req.body.email })
+      .then((user) => {
+        if (!user) {
+          req.flash("error", "No account wiuth that email found.");
+          return res.redirect("/reset");
+        }
+
+        user.resetToken = token;
+        user.resetTokenExpiration = Date.now() + 3600000; // 1시간 뒤에 만료
+        return user.save();
+      })
+      .then((result) => {
+        res.redirect("/");
+        transporter.sendMail({
+          to: req.body.email,
+          from: "inajung7008@gmail.com",
+          subject: "Password reset",
+          html: `
+            <p>You requested a password reset</p>
+            <p>Click this <a hrer="http://localhost:3000/reset/${token}">link</a> to set a new password.</p>
+          `,
+        });
+      })
+      .catch((err) => console.log(err));
   });
 };
 
