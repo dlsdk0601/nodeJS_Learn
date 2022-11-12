@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import nodemailer from "nodemailer";
 import sendgridTransport from "nodemailer-sendgrid-transport";
 import dotenv from "dotenv";
+import crypto from "crypto"; // node 에 내장되 있는 라이브러리
 
 dotenv.config();
 
@@ -134,6 +135,21 @@ const getReset = (req, res) => {
   });
 };
 
+const poetReset = (req, res) => {
+  crypto.randomBytes(32, (err, buffer) => {
+    if (err) {
+      console.log(err);
+      return res.redirect("/reset");
+    }
+
+    console.log("buffer==");
+    console.log(buffer);
+    const token = buffer.toString("hex"); // buffer가 16진법 값을 저장하므로 hex를 파라미터로 넣어서, 일반 아스키 문자로 변환하라고 명명 해줘야한다.
+    console.log("token===");
+    console.log(token);
+  });
+};
+
 export default {
   getLogin,
   postLogin,
@@ -141,4 +157,5 @@ export default {
   getSignUp,
   postSignUp,
   getReset,
+  poetReset,
 };
