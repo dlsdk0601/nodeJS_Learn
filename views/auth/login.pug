@@ -11,7 +11,6 @@ block content
     main 
         if errorMessage 
             div.user-message.user-message--error #{errorMessage}
-             
         form.login-form(action="/login", method="POST")
             .form-control 
                 label(for="email") E-Mail 
@@ -21,3 +20,5 @@ block content
                 input(type="password", name="password")#password 
             button.btn(type="submit") Login
             input(type="hidden", name="_csrf", value=(csrfToken))
+        .centered
+            a(href="/reset") Reset Password
