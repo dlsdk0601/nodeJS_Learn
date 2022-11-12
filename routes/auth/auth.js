@@ -15,4 +15,6 @@ authRouter.post("/logout", authController.postLogout);
 
 authRouter.get("/reset", authController.getReset);
 
+authRouter.post("/reset", authController.poetReset);
+
 export default authRouter;
