@@ -13,4 +13,6 @@ authRouter.post("/login", authController.postLogin);
 
 authRouter.post("/logout", authController.postLogout);
 
+authRouter.get("/reset", authController.getReset);
+
 export default authRouter;

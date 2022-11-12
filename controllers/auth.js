@@ -123,4 +123,22 @@ const postSignUp = (req, res) => {
     .catch((err) => console.log(err));
 };
 
-export default { getLogin, postLogin, postLogout, getSignUp, postSignUp };
+const getReset = (req, res) => {
+  const error = req.flash("error");
+  const errorMessage = error.length > 0 ? error[0] : null;
+
+  res.render("auth/reset", {
+    path: "/reset",
+    pageTitle: "Reset Password",
+    errorMessage,
+  });
+};
+
+export default {
+  getLogin,
+  postLogin,
+  postLogout,
+  getSignUp,
+  postSignUp,
+  getReset,
+};
