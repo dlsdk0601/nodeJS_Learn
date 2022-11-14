@@ -125,6 +125,9 @@ const postSignUp = (req, res) => {
     .catch((err) => console.log(err));
 };
 
+// 비밀번호 변경 로직 순서
+// /reset페이지로 이동 => 아이디 조회 => 아이디는 이메일이라서 아이디로 token이 담긴 link 달아서 전송 => link 클릭 후, 새 비밀번호 입력 => 입력 후 resetToken 없애고, 비밀번호 갱신하고 로그인 페이지로 이동
+
 const getReset = (req, res) => {
   const error = req.flash("error");
   const errorMessage = error.length > 0 ? error[0] : null;
