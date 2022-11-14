@@ -149,7 +149,7 @@ const poetReset = (req, res) => {
     User.findOne({ email: req.body.email })
       .then((user) => {
         if (!user) {
-          req.flash("error", "No account wiuth that email found.");
+          req.flash("error", "No account with that email found.");
           return res.redirect("/reset");
         }
 
@@ -165,7 +165,7 @@ const poetReset = (req, res) => {
           subject: "Password reset",
           html: `
             <p>You requested a password reset</p>
-            <p>Click this <a hrer="http://localhost:3000/reset/${token}">link</a> to set a new password.</p>
+            <p>Click this <a href="http://localhost:3000/reset/${token}">link</a> to set a new password.</p>
           `,
         });
       })
