@@ -20,6 +20,7 @@ const getEditProduct = (req, res) => {
   if (!editMode) {
     return res.redirect("/");
   }
+
   const prodId = req.params.productId;
   Product.findById(prodId)
     .then((product) => {
@@ -58,7 +59,7 @@ const postAddProduct = (req, res) => {
 
 const getProducts = (req, res) => {
   Product.find()
-    .select("-_id") // where 구문으로 필요한 필드를 나열하고 -를 붙여 불필요한 필드를 제거할 수 있다.
+    // .select("-_id") // where 구문으로 필요한 필드를 나열하고 -를 붙여 불필요한 필드를 제거할 수 있다.
     .populate("userId") //userId는 해당 상품을 만든 user의 id가 들어있는데, 유저의 id뿐 아니라 유저의 정보를 알고싶을때, userId의 필드를 먼저 채우라는 명령어로 populate를 선언할 수 있다. 중첩된 데이터를 한번에 얻을 수 있다.
     .then((products) => {
       res.render("admin/products", {
