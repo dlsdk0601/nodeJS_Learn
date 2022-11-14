@@ -36,6 +36,7 @@ const postLogin = (req, res) => {
   const {
     body: { email, password },
   } = req;
+
   User.findOne({ email })
     .then((user) => {
       if (!user) {
@@ -175,6 +176,27 @@ const poetReset = (req, res) => {
   });
 };
 
+const getNewPassword = (req, res) => {
+  const token = req.params.token;
+
+  User.findOne({
+    resetToken: token,
+    resetTokenExpiration: { $gt: Date.now() }, //오늘보다 큰 날짜를 선택하는건데 $gt의 뜻이 value보다 크다라는 뜻, 즉 오늘보다 토큰 만료일이 미래일 경우만 골라냄
+  })
+    .then((user) => {
+      const error = req.flash("error");
+      const errorMessage = error.length > 0 ? error[0] : null;
+
+      res.render("auth/new-password", {
+        path: "/new-password",
+        pageTitle: "New Password",
+        errorMessage,
+        userId: user._id.toString(),
+      });
+    })
+    .catch((err) => console.log(err));
+};
+
 export default {
   getLogin,
   postLogin,
@@ -183,4 +205,5 @@ export default {
   postSignUp,
   getReset,
   poetReset,
+  getNewPassword,
 };
