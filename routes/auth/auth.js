@@ -19,4 +19,6 @@ authRouter.post("/reset", authController.poetReset);
 
 authRouter.get("/reset/:token", authController.getNewPassword);
 
+authRouter.post("/new-password", authController.postNewPassword);
+
 export default authRouter;

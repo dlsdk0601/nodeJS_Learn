@@ -143,11 +143,8 @@ const poetReset = (req, res) => {
       return res.redirect("/reset");
     }
 
-    console.log("buffer==");
-    console.log(buffer);
-    const token = buffer.toString("hex"); // buffer가 16진법 값을 저장하므로 hex를 파라미터로 넣어서, 일반 아스키 문자로 변환하라고 명명 해줘야한다.
-    console.log("token===");
-    console.log(token);
+    // buffer가 16진법 값을 저장하므로 hex를 파라미터로 넣어서, 일반 아스키 문자로 변환하라고 명명 해줘야한다.
+    const token = buffer.toString("hex");
 
     User.findOne({ email: req.body.email })
       .then((user) => {
@@ -192,7 +189,35 @@ const getNewPassword = (req, res) => {
         pageTitle: "New Password",
         errorMessage,
         userId: user._id.toString(),
+        passwordToken: token,
       });
+    })
+    .catch((err) => console.log(err));
+};
+
+const postNewPassword = (req, res) => {
+  const {
+    body: { userId, password, passwordToken },
+  } = req;
+  let resetUser;
+
+  User.findOne({
+    resetToken: passwordToken,
+    resetTokenExpiration: { $gt: Date.now() },
+    _id: userId,
+  })
+    .then((user) => {
+      resetUser = user;
+      return bcrypt.hash(password, 12);
+    })
+    .then((hashedPassword) => {
+      resetUser.password = hashedPassword;
+      resetUser.resetToken = undefined;
+      resetUser.resetTokenExpiration = undefined;
+      return resetUser.save();
+    })
+    .then((result) => {
+      res.redirect("/login");
     })
     .catch((err) => console.log(err));
 };
@@ -206,4 +231,5 @@ export default {
   getReset,
   poetReset,
   getNewPassword,
+  postNewPassword,
 };
