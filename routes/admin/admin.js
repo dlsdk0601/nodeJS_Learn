@@ -5,11 +5,7 @@ import isAuthHaldler from "../../middleware/is-auth.js";
 const adminRoutes = express.Router();
 
 // 라우터는 왼쪽부터 차례대로 실행시킨다.
-adminRoutes.get(
-  "/add-pr isAuthHaldler,oduct",
-  isAuthHaldler,
-  adminController.getAddProduct
-);
+adminRoutes.get("/add-product", isAuthHaldler, adminController.getAddProduct);
 
 adminRoutes.get("/products", isAuthHaldler, adminController.getProducts);
 
