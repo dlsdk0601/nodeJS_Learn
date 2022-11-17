@@ -79,23 +79,27 @@ const postEditProduct = (req, res) => {
 
   Product.findById(productId)
     .then((product) => {
+      // 현재 user가 edit 권한이 있는지 확인
+      if (product.userId.toString() !== req.user._id.toString()) {
+        return res.redirect("/");
+      }
+
       // 여기서 파라미터 product는 js 객체가 아닌 mongoDB 객체이기에 메소드가 포함이다.
       product.title = title;
       product.imageUrl = imageUrl;
       product.price = price;
       product.description = description;
 
-      return product.save();
-    })
-    .then(() => {
-      res.redirect("/admin/products");
+      return product.save().then(() => {
+        res.redirect("/admin/products");
+      });
     })
     .catch((err) => console.log(err));
 };
 
 const postDeleteProduct = (req, res) => {
   const prodId = req.body.productId;
-  Product.findByIdAndRemove(prodId)
+  Product.deleteOne({ _id: prodId, userId: req.user._id }) // 둘다 만족하는 조건인 상품을 삭제하는데, userId 때문에 자동으로 권한 체크 하게 된다
     .then(() => {
       res.redirect("/admin/products");
     })
