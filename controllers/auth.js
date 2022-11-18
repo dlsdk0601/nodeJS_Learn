@@ -4,6 +4,7 @@ import nodemailer from "nodemailer";
 import sendgridTransport from "nodemailer-sendgrid-transport";
 import dotenv from "dotenv";
 import crypto from "crypto"; // node 에 내장되 있는 라이브러리
+import { validationResult } from "express-validator";
 
 dotenv.config();
 
@@ -89,6 +90,18 @@ const postSignUp = (req, res) => {
   const {
     body: { email, password, confirmPassword },
   } = req;
+
+  // router 미들웨어로 email 필드를 검사 하라고 했고, 검사 후 결과를
+  // req안에 담아주고 우리는 그걸 validationResult를 통해서 판정한다.
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return res.status(422).render("auth/signup", {
+      path: "/signup",
+      pageTitle: "signup",
+      errorMessage: errors.array(),
+    });
+  }
 
   if (confirmPassword !== password) {
     return res.redirect("/signup");
