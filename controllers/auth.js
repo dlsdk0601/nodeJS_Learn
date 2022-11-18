@@ -99,7 +99,7 @@ const postSignUp = (req, res) => {
     return res.status(422).render("auth/signup", {
       path: "/signup",
       pageTitle: "signup",
-      errorMessage: errors.array(),
+      errorMessage: errors.array()[0].msg,
     });
   }
 

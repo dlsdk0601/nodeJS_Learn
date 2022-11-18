@@ -8,7 +8,11 @@ authRouter.get("/login", authController.getLogin);
 
 authRouter.get("/signup", authController.getSignUp);
 
-authRouter.post("/signup", check("email").isEmail(), authController.postSignUp);
+authRouter.post(
+  "/signup",
+  check("email").isEmail().withMessage("please enter a valid email."), // error 메세지를 이렇게 커스텀 할 수 도 있다.
+  authController.postSignUp
+);
 
 authRouter.post("/login", authController.postLogin);
 
