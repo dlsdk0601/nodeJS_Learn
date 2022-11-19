@@ -31,6 +31,14 @@ authRouter.post(
         "please enter a password with only numbers and text and at least 5 characters."
       )
       .isAlphanumeric(),
+    body("confirmPassword").custom((value, { req }) => {
+      if (value !== req.body.password) {
+        // error 를 던지면 validationResult가 감지해서 error로 던짐
+        throw new Error("Passwords have to match!");
+      }
+
+      return true;
+    }),
   ],
   authController.postSignUp
 );
