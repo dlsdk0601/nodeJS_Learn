@@ -107,33 +107,25 @@ const postSignUp = (req, res) => {
     return res.redirect("/signup");
   }
 
-  User.findOne({ email })
-    .then((user) => {
-      if (user) {
-        req.flash("error", "Email exists already.");
-        return res.redirect("/signup");
-      }
-      // bcrypt의 hash에 대해서는 더 자세한 설명이 있는 다른 프로젝트 참고
-      return bcrypt
-        .hash(password, 12)
-        .then((hashedPassword) => {
-          const newUser = new User({
-            email,
-            password: hashedPassword,
-            cart: { items: [] },
-          });
-          return newUser.save();
-        })
-        .then((result) => {
-          res.redirect("/login");
-          return transporter.sendMail({
-            to: email,
-            from: "inajung7008@gmail.com",
-            subject: "welcome",
-            html: "<h1>You successfully signed up!</h1>",
-          });
-        })
-        .catch((err) => console.log(err));
+  // bcrypt의 hash에 대해서는 더 자세한 설명이 있는 다른 프로젝트 참고
+  return bcrypt
+    .hash(password, 12)
+    .then((hashedPassword) => {
+      const newUser = new User({
+        email,
+        password: hashedPassword,
+        cart: { items: [] },
+      });
+      return newUser.save();
+    })
+    .then((result) => {
+      res.redirect("/login");
+      return transporter.sendMail({
+        to: email,
+        from: "inajung7008@gmail.com",
+        subject: "welcome",
+        html: "<h1>You successfully signed up!</h1>",
+      });
     })
     .catch((err) => console.log(err));
 };

@@ -1,5 +1,6 @@
 import express from "express";
 import authController from "../../controllers/auth.js";
+import User from "../../models/user.js";
 import { check, body } from "express-validator";
 // 많은 패키지 중에서 유효성 검사하는 부분만 필요해서 check만 가져온다.
 // check는 body, 매게변수, 쿼리 매게변수 등을 확인
@@ -19,11 +20,14 @@ authRouter.post(
       .isEmail()
       .withMessage("please enter a valid email.")
       .custom((value, { req }) => {
-        if (value === "test@test.com") {
-          throw new Error("This email address if forbidden.");
-        }
-
-        return true;
+        // if (value === "test@test.com") {
+        //   throw new Error("This email address if forbidden.");
+        // }
+        User.findOne({ email: value }).then((user) => {
+          if (user) {
+            return Promise.reject("Email exists already.");
+          }
+        });
       }),
     body("password")
       .isLength({ min: 5 })
