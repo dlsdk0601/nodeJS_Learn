@@ -15,12 +15,12 @@ block content
         form(class="login-form" action="/signup", method="post")
             .form-control 
                 label(for="email") E-Mail 
-                input(type="text", name="email", id="email")
+                input(type="text", name="email", id="email", value=(oldInput.email))
             .form-control 
                 label(for="password") Password 
-                input(type="password", name="password", id="password")
+                input(type="password", name="password", id="password", value=(oldInput.password))
             .form-control 
                 label(for="confirmPassword") Confirm Password
-                input(type="password", name="confirmPassword", id="confirmPassword")
+                input(type="password", name="confirmPassword", id="confirmPassword", value=(oldInput.confirmPassword))
             button(class="btn", type="submit") signUp
             input(type="hidden", name="_csrf", value=(csrfToken))

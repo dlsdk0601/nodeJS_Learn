@@ -38,11 +38,20 @@ const postLogin = (req, res) => {
     body: { email, password },
   } = req;
 
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).render("auth/login", {
+      path: "/login",
+      pageTitle: "login",
+      errorMessage: errors.array()[0].msg,
+    });
+  }
+
   User.findOne({ email })
     .then((user) => {
       if (!user) {
         // flash 알림을 저장하는데 이때 key는 error로 하는데 사실 아무 이름 써도됨
-        req.flash("error", "Invlaid email or password.");
+        req.flash("error", "Invalid email or password.");
         return res.redirect("/login");
       }
       bcrypt
@@ -56,7 +65,7 @@ const postLogin = (req, res) => {
               res.redirect("/");
             });
           }
-          req.flash("error", "Invlaid email or password.");
+          req.flash("error", "Invalid email or password.");
           res.redirect("/login");
         })
         .catch((err) => {
@@ -83,6 +92,7 @@ const getSignUp = (req, res) => {
     path: "/signup",
     pageTitle: "signup",
     errorMessage,
+    oldInput: { email: "", password: "", confirmPassword: "" },
   });
 };
 
@@ -100,11 +110,8 @@ const postSignUp = (req, res) => {
       path: "/signup",
       pageTitle: "signup",
       errorMessage: errors.array()[0].msg,
+      oldInput: { email, password, confirmPassword },
     });
-  }
-
-  if (confirmPassword !== password) {
-    return res.redirect("/signup");
   }
 
   // bcrypt의 hash에 대해서는 더 자세한 설명이 있는 다른 프로젝트 참고
