@@ -23,7 +23,7 @@ authRouter.post(
         // if (value === "test@test.com") {
         //   throw new Error("This email address if forbidden.");
         // }
-        User.findOne({ email: value }).then((user) => {
+        return User.findOne({ email: value }).then((user) => {
           if (user) {
             return Promise.reject("Email exists already.");
           }

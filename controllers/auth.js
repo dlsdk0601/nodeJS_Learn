@@ -93,6 +93,7 @@ const getSignUp = (req, res) => {
     pageTitle: "signup",
     errorMessage,
     oldInput: { email: "", password: "", confirmPassword: "" },
+    validationErrors: [],
   });
 };
 
@@ -104,13 +105,17 @@ const postSignUp = (req, res) => {
   // router 미들웨어로 email 필드를 검사 하라고 했고, 검사 후 결과를
   // req안에 담아주고 우리는 그걸 validationResult를 통해서 판정한다.
   const errors = validationResult(req);
+  console.log(errors.array());
+  console.log(errors.isEmpty());
 
+  // error가 비었냐?
   if (!errors.isEmpty()) {
     return res.status(422).render("auth/signup", {
       path: "/signup",
       pageTitle: "signup",
       errorMessage: errors.array()[0].msg,
       oldInput: { email, password, confirmPassword },
+      validationErrors: errors.array(),
     });
   }
 
