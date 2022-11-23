@@ -28,26 +28,43 @@ authRouter.post(
             return Promise.reject("Email exists already.");
           }
         });
-      }),
+      })
+      .normalizeEmail(), // 데이터 살균 데이터에 type에 맞게 변화되서 저장시켜준다. 이메일의 경우 대문자를 모두 소문자로 바꿔줌
     body("password")
       .isLength({ min: 5 })
       .withMessage(
         "please enter a password with only numbers and text and at least 5 characters."
       )
-      .isAlphanumeric(),
-    body("confirmPassword").custom((value, { req }) => {
-      if (value !== req.body.password) {
-        // error 를 던지면 validationResult가 감지해서 error로 던짐
-        throw new Error("Passwords have to match!");
-      }
+      .isAlphanumeric()
+      .trim(),
+    body("confirmPassword")
+      .trim()
+      .custom((value, { req }) => {
+        if (value !== req.body.password) {
+          // error 를 던지면 validationResult가 감지해서 error로 던짐
+          throw new Error("Passwords have to match!");
+        }
 
-      return true;
-    }),
+        return true;
+      }),
   ],
   authController.postSignUp
 );
 
-authRouter.post("/login", authController.postLogin);
+authRouter.post(
+  "/login",
+  [
+    body("email")
+      .isEmail()
+      .withMessage("please enter a valid email address.")
+      .normalizeEmail(),
+    body("password", "Password has to be valid")
+      .isLength({ min: 5 })
+      .isAlphanumeric()
+      .trim(),
+  ],
+  authController.postLogin
+);
 
 authRouter.post("/logout", authController.postLogout);
 

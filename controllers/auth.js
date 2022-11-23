@@ -30,6 +30,11 @@ const getLogin = (req, res) => {
     path: "/login",
     pageTitle: "login",
     errorMessage,
+    oldInput: {
+      email: "",
+      password: "",
+    },
+    validationErrors: [],
   });
 };
 
@@ -44,15 +49,27 @@ const postLogin = (req, res) => {
       path: "/login",
       pageTitle: "login",
       errorMessage: errors.array()[0].msg,
+      oldInput: {
+        email,
+        password,
+      },
+      validationErrors: errors.array(),
     });
   }
 
   User.findOne({ email })
     .then((user) => {
       if (!user) {
-        // flash 알림을 저장하는데 이때 key는 error로 하는데 사실 아무 이름 써도됨
-        req.flash("error", "Invalid email or password.");
-        return res.redirect("/login");
+        return res.status(422).render("auth/login", {
+          path: "/login",
+          pageTitle: "login",
+          errorMessage: "Invlaid email or password",
+          oldInput: {
+            email,
+            password,
+          },
+          validationErrors: [{ param: "email", param: "password" }],
+        });
       }
       bcrypt
         .compare(password, user.password)
@@ -65,8 +82,16 @@ const postLogin = (req, res) => {
               res.redirect("/");
             });
           }
-          req.flash("error", "Invalid email or password.");
-          res.redirect("/login");
+          return res.status(422).render("auth/login", {
+            path: "/login",
+            pageTitle: "login",
+            errorMessage: errors.array()[0].msg,
+            oldInput: {
+              email,
+              password,
+            },
+            validationErrors: [{ param: "email", param: "password" }],
+          });
         })
         .catch((err) => {
           console.log(err);
@@ -105,8 +130,6 @@ const postSignUp = (req, res) => {
   // router 미들웨어로 email 필드를 검사 하라고 했고, 검사 후 결과를
   // req안에 담아주고 우리는 그걸 validationResult를 통해서 판정한다.
   const errors = validationResult(req);
-  console.log(errors.array());
-  console.log(errors.isEmpty());
 
   // error가 비었냐?
   if (!errors.isEmpty()) {
