@@ -14,18 +14,18 @@ block content
             form.product-form(action="/admin/edit-product", method="POST")
                 .form-control 
                     label(for="title") Title 
-                    input(type="text", name="title" value=(product.title))#title
+                    input(type="text", name="title" value=(product.title), class=(validationErrors.find(item => item.param === "title") ? "invalid" : ""))#title
                 .form-control 
                     label(for="imageUrl") Image Url 
-                    input(type="text", name="imageUrl" value=(product.imageUrl))#imageUrl
+                    input(type="text", name="imageUrl" value=(product.imageUrl), class=(validationErrors.find(item => item.param === "imageUrl") ? "invalid" : ""))#imageUrl
                 .form-control 
                     label(for="price") Price 
-                    input(type="number", name="price", value=(product.price))#price
+                    input(type="number", name="price", class=(validationErrors.find(item => item.param === "price") ? "invalid" : ""), value=(product.price))#price
                 .form-control 
                     label(for="description") Description 
-                    textarea(row="5", name="description")#description #{product.description}
-                input(type="hidden" value=(product._id) name="productId")
-                input(type="hidden", name="_csrf", value=(csrfToken))
+                    textarea(row="5", name="description", class=(validationErrors.find(item => item.param === "description") ? "invalid" : ""),)#description #{product.description}
+                input(type="hidden", value=(product._id) name="productId")
+                input(type="hidden", name="_csrf")
                 button.btn(type="submit") Edit Product
         else 
             form.product-form(action="/admin/add-product", method="POST")
