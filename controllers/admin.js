@@ -1,4 +1,5 @@
 import Product from "../models/product.js";
+import { validationResult } from "express-validator";
 
 const getAddProduct = (req, res) => {
   // 로그인 기반이 되는 라우터는 이런식으로 보호되야한다.
@@ -11,6 +12,8 @@ const getAddProduct = (req, res) => {
     pageTitle: "add-product",
     path: "/admin/add-product",
     editing: false,
+    hasError: false,
+    errorMessage: null,
   });
 };
 
@@ -32,6 +35,8 @@ const getEditProduct = (req, res) => {
         pageTitle: "edit-product",
         path: "/admin/products",
         editing: true,
+        hasError: false,
+        errorMessage: null,
         product,
       });
     })
@@ -40,6 +45,25 @@ const getEditProduct = (req, res) => {
 
 const postAddProduct = (req, res) => {
   const { title, imageUrl, price, description } = req.body;
+
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return res.status(422).render("admin/edit-product", {
+      pageTitle: "Add-product",
+      path: "/admin/products",
+      editing: false,
+      hasError: false,
+      errorMessage: errors.array()[0].msg,
+      product: {
+        title,
+        imageUrl,
+        price,
+        description,
+      },
+    });
+  }
+
   const product = new Product({
     title,
     price,

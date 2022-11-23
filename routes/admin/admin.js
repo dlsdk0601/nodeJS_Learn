@@ -1,6 +1,7 @@
 import express from "express";
 import adminController from "../../controllers/admin.js";
 import isAuthHaldler from "../../middleware/is-auth.js";
+import { body } from "express-validator";
 
 const adminRoutes = express.Router();
 
@@ -9,7 +10,17 @@ adminRoutes.get("/add-product", isAuthHaldler, adminController.getAddProduct);
 
 adminRoutes.get("/products", isAuthHaldler, adminController.getProducts);
 
-adminRoutes.post("/add-product", isAuthHaldler, adminController.postAddProduct);
+adminRoutes.post(
+  "/add-product",
+  [
+    body("title").isString().isLength({ min: 3 }).trim(),
+    body("imageUrl").isURL(),
+    body("price").isFloat().trim(),
+    body("description").isLength({ min: 5, max: 200 }).trim(),
+  ],
+  isAuthHaldler,
+  adminController.postAddProduct
+);
 
 adminRoutes.get(
   "/edit-product/:productId",
@@ -19,6 +30,12 @@ adminRoutes.get(
 
 adminRoutes.post(
   "/edit-product",
+  [
+    body("title").isString().isLength({ min: 3 }).trim(),
+    body("imageUrl").isURL(),
+    body("price").isFloat().trim(),
+    body("description").isLength({ min: 5, max: 200 }).trim(),
+  ],
   isAuthHaldler,
   adminController.postEditProduct
 );
