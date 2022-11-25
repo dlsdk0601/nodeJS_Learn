@@ -28,8 +28,7 @@ const csrfProftection = csrf({});
 
 const __dirname = path.resolve();
 
-// view engine으로 어떤걸 사용할 건지 설정.
-// 설정하지 않을 경우, 기본 html이 디폴트
+// view engine으로 어떤걸 사용할 건지 설정. 설정하지 않을 경우, 기본 html이 디폴트
 // pug, ejs 등과 같은 엔진이 있다.
 app.set("view engine", "pug");
 app.set("views", "views");
@@ -76,10 +75,16 @@ app.use((req, res, next) => {
   }
   User.findById(req.session.user._id)
     .then((user) => {
+      if (!user) {
+        next();
+      }
       req.user = user;
       next();
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      console.log(err);
+      throw new Error(err);
+    });
 });
 
 app.use((req, res, next) => {
@@ -102,6 +107,6 @@ app.use(errorPage.get404);
 mongoose
   .connect(MONGODB_URI)
   .then(() => {
-    app.listen(3000, () => console.log("connect:::::::::::::::::::::::"));
+    app.listen(8000, () => console.log("connect:::::::::::::::::::::::"));
   })
   .catch((err) => console.log(err));
