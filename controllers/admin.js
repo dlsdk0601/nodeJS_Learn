@@ -1,7 +1,7 @@
 import Product from "../models/product.js";
 import { validationResult } from "express-validator";
 
-const getAddProduct = (req, res) => {
+const getAddProduct = (req, res, next) => {
   // 로그인 기반이 되는 라우터는 이런식으로 보호되야한다.
   // 그런데 아래와 같이 하면 확장성 다 무시되고, 모든 라우터에 다 추가해줘야한다.
   // if (!req.session.isLogged) {
@@ -18,7 +18,7 @@ const getAddProduct = (req, res) => {
   });
 };
 
-const getEditProduct = (req, res) => {
+const getEditProduct = (req, res, next) => {
   const editMode = req.query.edit;
 
   if (!editMode) {
@@ -42,10 +42,14 @@ const getEditProduct = (req, res) => {
         validationErrors: [],
       });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
-const postAddProduct = (req, res) => {
+const postAddProduct = (req, res, next) => {
   const { title, imageUrl, price, description } = req.body;
 
   const errors = validationResult(req);
@@ -81,10 +85,14 @@ const postAddProduct = (req, res) => {
     .then(() => {
       res.redirect("/");
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
-const getProducts = (req, res) => {
+const getProducts = (req, res, next) => {
   // 권한 부여!!
   // 생성하지 않은 상품을 다른 유저가 삭제 및 수정하지 못하게 권한을 제한한다.
 
@@ -98,10 +106,14 @@ const getProducts = (req, res) => {
         path: "/admin/products",
       });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
-const postEditProduct = (req, res) => {
+const postEditProduct = (req, res, next) => {
   const { productId, title, imageUrl, price, description } = req.body;
 
   const errors = validationResult(req);
@@ -141,16 +153,24 @@ const postEditProduct = (req, res) => {
         res.redirect("/admin/products");
       });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
-const postDeleteProduct = (req, res) => {
+const postDeleteProduct = (req, res, next) => {
   const prodId = req.body.productId;
   Product.deleteOne({ _id: prodId, userId: req.user._id }) // 둘다 만족하는 조건인 상품을 삭제하는데, userId 때문에 자동으로 권한 체크 하게 된다
     .then(() => {
       res.redirect("/admin/products");
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 export default {

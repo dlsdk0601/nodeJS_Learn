@@ -19,7 +19,7 @@ const transporter = nodemailer.createTransport(
   })
 );
 
-const getLogin = (req, res) => {
+const getLogin = (req, res, next) => {
   // error에 저장돼있던 내용을 불러온다. 이 후에 정보는 세션에서 제거된다.
   // req.flash("error")는 한번이라도 호출되면 바로 삭제됨.
 
@@ -38,7 +38,7 @@ const getLogin = (req, res) => {
   });
 };
 
-const postLogin = (req, res) => {
+const postLogin = (req, res, next) => {
   const {
     body: { email, password },
   } = req;
@@ -98,10 +98,14 @@ const postLogin = (req, res) => {
           return res.redirect("/login");
         });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
-const postLogout = (req, res) => {
+const postLogout = (req, res, next) => {
   req.session.destroy((err) => {
     console.log(err);
     // 세션이 파괴됐으므로 req.session은 사용못함
@@ -109,7 +113,7 @@ const postLogout = (req, res) => {
   });
 };
 
-const getSignUp = (req, res) => {
+const getSignUp = (req, res, next) => {
   const error = req.flash("error");
   const errorMessage = error.length > 0 ? error[0] : null;
 
@@ -122,7 +126,7 @@ const getSignUp = (req, res) => {
   });
 };
 
-const postSignUp = (req, res) => {
+const postSignUp = (req, res, next) => {
   const {
     body: { email, password, confirmPassword },
   } = req;
@@ -162,13 +166,17 @@ const postSignUp = (req, res) => {
         html: "<h1>You successfully signed up!</h1>",
       });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 // 비밀번호 변경 로직 순서
 // /reset페이지로 이동 => 아이디 조회 => 아이디는 이메일이라서 아이디로 token이 담긴 link 달아서 전송 => link 클릭 후, 새 비밀번호 입력 => 입력 후 resetToken 없애고, 비밀번호 갱신하고 로그인 페이지로 이동
 
-const getReset = (req, res) => {
+const getReset = (req, res, next) => {
   const error = req.flash("error");
   const errorMessage = error.length > 0 ? error[0] : null;
 
@@ -179,7 +187,7 @@ const getReset = (req, res) => {
   });
 };
 
-const poetReset = (req, res) => {
+const poetReset = (req, res, next) => {
   crypto.randomBytes(32, (err, buffer) => {
     if (err) {
       console.log(err);
@@ -212,11 +220,15 @@ const poetReset = (req, res) => {
           `,
         });
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(error);
+      });
   });
 };
 
-const getNewPassword = (req, res) => {
+const getNewPassword = (req, res, next) => {
   const token = req.params.token;
 
   User.findOne({
@@ -235,10 +247,14 @@ const getNewPassword = (req, res) => {
         passwordToken: token,
       });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
-const postNewPassword = (req, res) => {
+const postNewPassword = (req, res, next) => {
   const {
     body: { userId, password, passwordToken },
   } = req;
@@ -262,7 +278,11 @@ const postNewPassword = (req, res) => {
     .then((result) => {
       res.redirect("/login");
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 export default {

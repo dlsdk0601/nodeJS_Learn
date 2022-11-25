@@ -1,7 +1,7 @@
 import Product from "../models/product.js";
 import Order from "../models/order.js";
 
-const getProducts = (req, res) => {
+const getProducts = (req, res, next) => {
   Product.find()
     .then((products) => {
       res.render("shop/product-list", {
@@ -10,10 +10,14 @@ const getProducts = (req, res) => {
         path: "/products",
       });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
-const getIndex = (req, res) => {
+const getIndex = (req, res, next) => {
   Product.find()
     .then((products) => {
       res.render("shop/index", {
@@ -23,10 +27,14 @@ const getIndex = (req, res) => {
         csrfToken: req.csrfToken(), // csrfToken 매서드는 미들웨어에 의해 추가된다. app.js 참고
       });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
-const getCart = (req, res) => {
+const getCart = (req, res, next) => {
   req.user
     .populate("cart.items.productId") // cart 객체를 반환한다.
     .then((user) => {
@@ -37,20 +45,28 @@ const getCart = (req, res) => {
         products,
       });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
-const postCart = (req, res) => {
+const postCart = (req, res, next) => {
   const prodId = req.body.productId;
   Product.findById(prodId)
     .then((product) => {
       return req.user.addToCart(product);
     })
     .then(() => res.redirect("/cart"))
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
-const getOrders = (req, res) => {
+const getOrders = (req, res, next) => {
   Order.find({ "user.userId": req.user._id })
     .then((orders) => {
       res.render("shop/orders", {
@@ -59,10 +75,14 @@ const getOrders = (req, res) => {
         path: "/orders",
       });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
-const getProduct = (req, res) => {
+const getProduct = (req, res, next) => {
   const prodId = req.params.productId;
   // mongoose에 findById라는 함수가 내장돼잇음
   Product.findById(prodId)
@@ -73,20 +93,28 @@ const getProduct = (req, res) => {
         path: "/products",
       });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
-const postCartDeleteProduct = (req, res) => {
+const postCartDeleteProduct = (req, res, next) => {
   const prodId = req.body.productId;
   req.user
     .removeFromCart(prodId)
     .then(() => {
       res.redirect("/cart");
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
-const postOrder = (req, res) => {
+const postOrder = (req, res, next) => {
   req.user
     .populate("cart.items.productId")
     .then((user) => {
@@ -109,7 +137,11 @@ const postOrder = (req, res) => {
     .then(() => {
       res.redirect("/orders");
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 export default {

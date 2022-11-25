@@ -100,8 +100,17 @@ app.use((req, res, next) => {
 // router 순서가 매우 중요하기에, 잘 고려해서 순서대로 작성할것.
 app.use(api);
 
+// 500 error 페이지
+app.use("/500", errorPage.get500);
+
 // 404 error
 app.use(errorPage.get404);
+
+// catch 안에 던져진 에러 처리
+app.use((err, req, res, next) => {
+  // res.status.(err.thhpStatusCode).render(...) 이런식으로 redirect가 아닌 render로도 처리 가능
+  res.redirect("/500");
+});
 
 // 이제부터 mongoose 시작
 mongoose
