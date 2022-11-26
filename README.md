@@ -60,3 +60,22 @@ node app.js (app.js 실행) => script 시작 => 코드 분석 후, 변수와 함
 node가 관리하는 이벤트 루프는 작업이 남아 있는 한 계속해서 작동하는 루프 프로세스로 EventListener가 있는한 계속 작동합니다.
 
 node가 이런 라이플 사이클을 가지는 이유는, 단일 스레드 js를 실행하기 때문입니다.
+
+
+### http status code
+
+2xx : 성공 코드
+- 200: Operation succeeded
+- 201: Success, resource created
+
+3xx : 리다이렉션이 발생
+- 301: moved permanently
+
+4xx : client side error
+- 401: Not authenticated
+- 403: Not authorized
+- 404: Not found
+- 422: Invalid input
+
+5xx : server side error
+- 500: server error
