@@ -33,7 +33,7 @@ const __dirname = path.resolve();
 app.set("view engine", "pug");
 app.set("views", "views");
 
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({extended: false}));
 
 // html에 해당하는 css 파일이 다운 받아지지 않음
 // public폴더는 공개 폴더이므로 여기에 css같은 파일을 넣어놓음. 그외 라우팅은 express에서 라우팅 처리하려고 시도함
@@ -70,6 +70,16 @@ app.use(csrfProftection);
 app.use(flash());
 
 app.use((req, res, next) => {
+  // csrf 토큰을 render할때 추가 해줘야하기에 모든 view단 route controller에 추가하면 복잡하니까,
+  // middleware로 한번에 처리해준다.
+
+  // view에만 존재하므로 local이라고 부른다.
+  res.locals.isAuthenticated = req.session.isLogged;
+  res.locals.csrfToken = req.csrfToken();
+  next();
+});
+
+app.use((req, res, next) => {
   if (!req.session.user) {
     return next();
   }
@@ -83,18 +93,8 @@ app.use((req, res, next) => {
     })
     .catch((err) => {
       console.log(err);
-      throw new Error(err);
+      next(new Error(err));
     });
-});
-
-app.use((req, res, next) => {
-  // csrf 토큰을 render할때 추가 해줘야하기에 모든 view단 route controller에 추가하면 복잡하니까,
-  // middleware로 한번에 처리해준다.
-
-  // view에만 존재하므로 local이라고 부른다.
-  res.locals.isAuthenticated = req.session.isLogged;
-  res.locals.csrfToken = req.csrfToken();
-  next();
 });
 
 // router 순서가 매우 중요하기에, 잘 고려해서 순서대로 작성할것.
