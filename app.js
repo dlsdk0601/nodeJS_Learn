@@ -10,6 +10,7 @@ import session from "express-session";
 import mongoDBStore from "connect-mongodb-session";
 import csrf from "csurf";
 import flash from "connect-flash";
+import multer from "multer";
 
 dotenv.config();
 
@@ -34,6 +35,9 @@ app.set("view engine", "pug");
 app.set("views", "views");
 
 app.use(bodyParser.urlencoded({extended: false}));
+
+// dest: "images"는 buffer로 전달해주는게 아니라  /images라는 폴더에 바로 생성시킨다.
+app.use(multer({dest: "images"}).single("image"));
 
 // html에 해당하는 css 파일이 다운 받아지지 않음
 // public폴더는 공개 폴더이므로 여기에 css같은 파일을 넣어놓음. 그외 라우팅은 express에서 라우팅 처리하려고 시도함
