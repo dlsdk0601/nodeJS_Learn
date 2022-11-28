@@ -1,20 +1,20 @@
 import Product from "../models/product.js";
 import { validationResult } from "express-validator";
 
-const getAddProduct = (req, res, next) => {
+const getAddProduct = (req, res) => {
   // 로그인 기반이 되는 라우터는 이런식으로 보호되야한다.
   // 그런데 아래와 같이 하면 확장성 다 무시되고, 모든 라우터에 다 추가해줘야한다.
   // if (!req.session.isLogged) {
   //   return res.redirect("/login");
   // }
-
-  res.render("admin/edit-product", {
+  console.log("start")
+  return res.render("admin/edit-product", {
     pageTitle: "add-product",
     path: "/admin/add-product",
     editing: false,
     hasError: false,
     errorMessage: null,
-    validationErros: [],
+    validationErrors: [],
   });
 };
 
@@ -32,7 +32,7 @@ const getEditProduct = (req, res, next) => {
         return res.redirect("/");
       }
 
-      res.render("admin/edit-product", {
+      return res.render("admin/edit-product", {
         pageTitle: "edit-product",
         path: "/admin/products",
         editing: true,
