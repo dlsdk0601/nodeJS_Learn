@@ -50,7 +50,10 @@ const getEditProduct = (req, res, next) => {
 };
 
 const postAddProduct = (req, res, next) => {
-  const { title, image: imageUrl, price, description } = req.body;
+  const { title, price, description } = req.body;
+  const imageUrl = req.file;
+  console.log("imageUrl");
+  console.log(imageUrl);
 
   const errors = validationResult(req);
 
