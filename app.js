@@ -109,7 +109,12 @@ app.use(errorPage.get404);
 // catch 안에 던져진 에러 처리
 app.use((err, req, res, next) => {
   // res.status.(err.thhpStatusCode).render(...) 이런식으로 redirect가 아닌 render로도 처리 가능
-  res.redirect("/500");
+  console.log(err)
+  return res.status(500).render("500", {
+    pageTitle: "Error!",
+    path: "/500",
+    isAuthenticated: req.session.isLoggedIn
+  });
 });
 
 // 이제부터 mongoose 시작
