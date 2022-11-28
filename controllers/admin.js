@@ -50,7 +50,7 @@ const getEditProduct = (req, res, next) => {
 };
 
 const postAddProduct = (req, res, next) => {
-  const { title, imageUrl, price, description } = req.body;
+  const { title, image: imageUrl, price, description } = req.body;
 
   const errors = validationResult(req);
 
@@ -95,7 +95,6 @@ const postAddProduct = (req, res, next) => {
 const getProducts = (req, res, next) => {
   // 권한 부여!!
   // 생성하지 않은 상품을 다른 유저가 삭제 및 수정하지 못하게 권한을 제한한다.
-
   Product.find({ userId: req.user._id }) // 미들웨어로 req.user에 user 정보 넣어놨음.
     // .select("-_id") // where 구문처럼 필요한 필드를 나열하고 -를 붙여 불필요한 필드를 제거할 수 있다.
     // .populate("userId") userId는 해당 상품을 만든 user의 id가 들어있는데, 유저의 id뿐 아니라 유저의 정보를 알고싶을때, userId의 필드를 먼저 채우라는 명령어로 populate를 선언할 수 있다. 중첩된 데이터를 한번에 얻을 수 있다.
