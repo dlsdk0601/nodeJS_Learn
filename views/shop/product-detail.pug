@@ -8,7 +8,7 @@ block content
         h1 #{title}
         hr
         div 
-            img(src=(prd.imageUrl), alt=(prd.title))
+            img(src=("/" + prd.imageUrl), alt=(prd.title))
         h2 #{prd.price}
         p   #{prd.description}
         if isAuthenticated
