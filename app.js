@@ -60,7 +60,8 @@ app.use(multer({storage: fileStorage, fileFilter: fileFilter}).single("image"));
 // public폴더는 공개 폴더이므로 여기에 css같은 파일을 넣어놓음. 그외 라우팅은 express에서 라우팅 처리하려고 시도함
 // express.static 정적으로 서비스하기 원하는 폴더 경로를 입력하면 된다. (바로 읽기 권한은 허용하고자하는 폴더)
 // 이제 .css나 .js파일을 찾으려할때는 자동으로 public 폴더로 포워딩한다.
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "public")));  // root폴더를 기준으로 public 폴더를 공개 폴더로. => 때문에 public안에 있는 파일은 / 경로부터 찾는다
+app.use("/images+", express.static(path.join(__dirname, "images"))); // 여기도 / 부터 찾게되는데 그렇지 않게 하기 위해 /images를 붙인다
 
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 // seesion 함수에 객체를 넣는데, 세션 설정에 들어갈 값들로 구성한 객체이다.
