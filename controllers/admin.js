@@ -51,11 +51,29 @@ const getEditProduct = (req, res, next) => {
 
 const postAddProduct = (req, res, next) => {
   const { title, price, description } = req.body;
-  const imageUrl = req.file;
+  const image = req.file;
   console.log("imageUrl");
-  console.log(imageUrl);
+  console.log(image);
+
+  if(!image){
+    return res.status(422).render("admin/edit-product", {
+      pageTitle: "Add-product",
+      path: "/admin/products",
+      editing: false,
+      hasError: false,
+      errorMessage: "Attached file is not an image.",
+      product: {
+        title,
+        price,
+        description,
+      },
+      validationErrors: [],
+    });
+  }
 
   const errors = validationResult(req);
+
+  const imageUrl = image.path;
 
   if (!errors.isEmpty()) {
     return res.status(422).render("admin/edit-product", {
@@ -66,7 +84,6 @@ const postAddProduct = (req, res, next) => {
       errorMessage: errors.array()[0].msg,
       product: {
         title,
-        imageUrl,
         price,
         description,
       },
@@ -116,7 +133,8 @@ const getProducts = (req, res, next) => {
 };
 
 const postEditProduct = (req, res, next) => {
-  const { productId, title, imageUrl, price, description } = req.body;
+  const { productId, title, price, description } = req.body;
+  const image = req.file;
 
   const errors = validationResult(req);
 
@@ -129,7 +147,6 @@ const postEditProduct = (req, res, next) => {
       errorMessage: errors.array()[0].msg,
       product: {
         title,
-        imageUrl,
         price,
         description,
         _id: productId,
@@ -147,7 +164,9 @@ const postEditProduct = (req, res, next) => {
 
       // 여기서 파라미터 product는 js 객체가 아닌 mongoDB 객체이기에 메소드가 포함이다.
       product.title = title;
-      product.imageUrl = imageUrl;
+      if(image){
+        product.imageUrl = image.path;
+      }
       product.price = price;
       product.description = description;
 
