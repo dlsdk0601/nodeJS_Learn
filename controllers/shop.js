@@ -1,3 +1,5 @@
+import fs from "fs";
+import path from "path";
 import Product from "../models/product.js";
 import Order from "../models/order.js";
 
@@ -35,14 +37,15 @@ const getIndex = (req, res, next) => {
 };
 
 const getCart = (req, res, next) => {
-  req.user
+  return req.user
     .populate("cart.items.productId") // cart 객체를 반환한다.
     .then((user) => {
       const products = [...user.cart.items];
+
       res.render("shop/cart", {
         pageTitle: "Your Cart",
         path: "/cart",
-        products,
+        products: products ?? [],
       });
     })
     .catch((err) => {
@@ -144,6 +147,21 @@ const postOrder = (req, res, next) => {
     });
 };
 
+const getInvoice = (req, res, next) => {
+  const orderId = req.params.orderId;
+  const invoiceName = `invoice-${orderId}.pdf`;
+  const invoicePath = path.join("data", "invoices", invoiceName);
+  fs.readFile(invoicePath, (err, data) => {
+    if(err){
+      return next(err);
+    }
+
+    res.setHeader("Content-Type", "application/pdf"); // 반환하는 형식을 json이 아니라 pdf 로 반환
+    res.setHeader("Content-Disposition", `inline; filename='${invoiceName}'`); // a 링크 클릭시, 새탭에서 파일 열기
+    res.send(data);
+  });
+}
+
 export default {
   getProducts,
   getIndex,
@@ -153,4 +171,5 @@ export default {
   postCart,
   postCartDeleteProduct,
   postOrder,
+  getInvoice
 };
