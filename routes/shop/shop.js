@@ -26,4 +26,6 @@ shopRoutes.post("/create-order", isAuthHaldler, shopController.postOrder);
 
 shopRoutes.get("/orders", isAuthHaldler, shopController.getOrders);
 
+shopRoutes.get("/orders/:orderId", isAuthHaldler, shopController.getInvoice);
+
 export default shopRoutes;
