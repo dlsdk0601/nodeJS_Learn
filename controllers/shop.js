@@ -149,7 +149,7 @@ const postOrder = (req, res, next) => {
 };
 
 const getInvoice = (req, res, next) => {
-  const orderId = req.params.orderId;
+  const orderId = req.params orderId;
 
   Order.findById(orderId).then(order => {
     if(!order){
@@ -182,8 +182,8 @@ const getInvoice = (req, res, next) => {
      })
 
       pdfDoc.text("---");
-     pdfDoc.fontSize(20).text(`Total Price: $ ${totalPrice}`); // 생성한 pdf에 텍스트를 적겠다.
-     pdfDoc.end(); // pdf 생성을 끝내겠다
+      pdfDoc.fontSize(20).text(`Total Price: $ ${totalPrice}`); // 생성한 pdf에 텍스트를 적겠다.
+      pdfDoc.end(); // pdf 생성을 끝내겠다
 
     // 이렇게 진행하면 메모리 낭비됨.
     // fs.readFile(invoicePath, (err, data) => {
