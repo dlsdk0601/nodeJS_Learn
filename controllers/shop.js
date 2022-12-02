@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import PDFDocument from "pdfkit";
 import Product from "../models/product.js";
 import Order from "../models/order.js";
 
@@ -161,15 +162,46 @@ const getInvoice = (req, res, next) => {
 
     const invoiceName = `invoice-${orderId}.pdf`;
     const invoicePath = path.join("data", "invoices", invoiceName);
-    fs.readFile(invoicePath, (err, data) => {
-      if(err){
-        return next(err);
-      }
 
-      res.setHeader("Content-Type", "application/pdf"); // 반환하는 형식을 json이 아니라 pdf 로 반환
-      res.setHeader("Content-Disposition", `inline; filename='${invoiceName}'`); // a 링크 클릭시, 새탭에서 파일 열기
-      res.send(data);
-    });
+    // PDF 업로드 말고 만드는 방법
+     const pdfDoc = new PDFDocument();
+     res.setHeader("Content-Type", "application/pdf");
+     res.setHeader("Content-Disposition", `inline; filename='${invoiceName}'`);
+     pdfDoc.pipe(fs.createWriteStream(invoicePath));
+     pdfDoc.pipe(res);
+
+     let totalPrice = 0;
+     pdfDoc.fontSize(26).text("Invoice", {
+       underline: true
+     });
+     pdfDoc.text("-------------------------");
+     order.products.forEach(prod => {
+         console.log(prod)
+       totalPrice += prod.quantity * prod.productData.price;
+       pdfDoc.fontSize(14).text(`${prod.productData.title}-${prod.quantity} x $ ${prod.productData.price}`);
+     })
+
+      pdfDoc.text("---");
+     pdfDoc.fontSize(20).text(`Total Price: $ ${totalPrice}`); // 생성한 pdf에 텍스트를 적겠다.
+     pdfDoc.end(); // pdf 생성을 끝내겠다
+
+    // 이렇게 진행하면 메모리 낭비됨.
+    // fs.readFile(invoicePath, (err, data) => {
+    //   if(err){
+    //     return next(err);
+    //   }
+    //
+    //   res.setHeader("Content-Type", "application/pdf"); // 반환하는 형식을 json이 아니라 pdf 로 반환
+    //   res.setHeader("Content-Disposition", `inline; filename='${invoiceName}'`); // a 링크 클릭시, 새탭에서 파일 열기
+    //   res.send(data);
+    // });
+
+  //   스트리밍으로 다운 받는 방법
+  //   const file = fs.createReadStream(invoicePath); // 이렇게 하면 node가 데이터를 차례대로 데이터 청크를 읽게 된다.
+  //   res.setHeader("Content-Type", "application/pdf");
+  //   res.setHeader("Content-Disposition", `inline; filename='${invoiceName}'`);
+  //
+  //   file.pipe(res); // pipe 메서드를 이용해 읽어들인 데이터를 res로 전달한다.
   }).catch(err => next(err))
 
 }
