@@ -4,7 +4,7 @@ import PDFDocument from "pdfkit";
 import Product from "../models/product.js";
 import Order from "../models/order.js";
 
-const ITEM_PER_PAGE = 2;
+const ITEM_PER_PAGE = 1;
 
 const getProducts = (req, res, next) => {
   Product.find()
@@ -23,14 +23,14 @@ const getProducts = (req, res, next) => {
 };
 
 const getIndex = (req, res, next) => {
-  const page = req.query.page;
+  const page = Number(req.query.page) || 1;
   let totalItems;
 
   // .skip((page - 1) * ITEM_PER_PAGE) // 그중에 skip은 전 페이지에서 count 만큼 곱한 수를 뺀 다음 데이터
   // .limit(ITEM_PER_PAGE) // 현재 가져와야할 count 만큼
   // 페이지 하드 코딩말고 업데이트 되는 방식으로 진행하는 법
   Product.find()
-    .count()
+    .countDocuments()
     .then((numProducts) => {
       totalItems = numProducts;
       return Product.find()
@@ -42,7 +42,7 @@ const getIndex = (req, res, next) => {
         prods: products,
         pageTitle: "Shop",
         path: "/",
-        totalProducts: totalItems,
+        currentPage: page,
         hasNextPage: ITEM_PER_PAGE * page < totalItems,
         hasPreviousPage: page > 1,
         nextPage: page + 1,
