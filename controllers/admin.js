@@ -1,5 +1,6 @@
 import Product from "../models/product.js";
 import { validationResult } from "express-validator";
+import fileHelper from "../utils/file.js";
 
 const getAddProduct = (req, res) => {
   // 로그인 기반이 되는 라우터는 이런식으로 보호되야한다.
@@ -165,6 +166,7 @@ const postEditProduct = (req, res, next) => {
       // 여기서 파라미터 product는 js 객체가 아닌 mongoDB 객체이기에 메소드가 포함이다.
       product.title = title;
       if(image){
+        fileHelper.deleteFile(product.imageUrl);
         product.imageUrl = image.path;
       }
       product.price = price;
@@ -183,8 +185,13 @@ const postEditProduct = (req, res, next) => {
 
 const postDeleteProduct = (req, res, next) => {
   const prodId = req.body.productId;
-  Product.deleteOne({ _id: prodId, userId: req.user._id }) // 둘다 만족하는 조건인 상품을 삭제하는데, userId 때문에 자동으로 권한 체크 하게 된다
-    .then(() => {
+  Product.findById(prodId).then(prod => {
+    if(!prod){
+      return next(new Error("Prodcut not found."))
+    }
+    fileHelper.deleteFile(prod.imageUrl);
+    return Product.deleteOne({ _id: prodId, userId: req.user._id }) // 둘다 만족하는 조건인 상품을 삭제하는데, userId 때문에 자동으로 권한 체크 하게 된다
+  }).then(() => {
       res.redirect("/admin/products");
     })
     .catch((err) => {
