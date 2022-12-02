@@ -26,5 +26,8 @@ block content
                                     button(type="submit").btn Add to Cart
                                     input(type="hidden", name="productId", value=(product._id))
                                     input(type="hidden", name="_csrf", value=(csrfToken))
+            section.pagination
+                a(href="/?page=1") 1
+                a(href="/?page=2") 2
         else
             h1 No Products
