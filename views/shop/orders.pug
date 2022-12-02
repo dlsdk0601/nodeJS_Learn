@@ -9,10 +9,10 @@ block content
             ul 
                 each order in orders 
                     li 
-                        h1 #{order._id}
+                        h1 #{order._id} -
+                            a(href=(`/orders/${order._id}`)) Invoices
                         ul
                             each product in order.products
-                                li #{product.productData.title} (#{product.quantity}) -
-                                    a(href=(`/orders/${order._id}`)) Invoices
+                                li #{product.productData.title} (#{product.quantity})
         else 
             h1 No Orders 
