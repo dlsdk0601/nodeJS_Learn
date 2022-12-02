@@ -99,12 +99,12 @@ const postAddProduct = (req, res, next) => {
     imageUrl,
     userId: req.user, // 원래는 req.user._id가 정확하지만, mongoose는 편리하게 user 객체도 저장가능하며, 객체 안에 _id를 찾아서 할당시킨다. 왜냐면 product schema를 정의할때, type이 ObjectId로 정의했기 떄문
   });
-
+  console.log("here1")
   // mongoose를 사용하기 이전에 product라는 class에 save라는 함수를 만들어서 사용했지만, 이제 mongoose 내부에 있는 save라는 함수로 db에 저장
   product
     .save()
     .then(() => {
-      res.redirect("/");
+      return res.redirect("/");
     })
     .catch((err) => {
       const error = new Error(err);
