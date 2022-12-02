@@ -4,6 +4,8 @@ import PDFDocument from "pdfkit";
 import Product from "../models/product.js";
 import Order from "../models/order.js";
 
+const ITEM_PER_PAGE = 2;
+
 const getProducts = (req, res, next) => {
   Product.find()
     .then((products) => {
@@ -21,12 +23,31 @@ const getProducts = (req, res, next) => {
 };
 
 const getIndex = (req, res, next) => {
+  const page = req.query.page;
+  let totalItems;
+
+  // .skip((page - 1) * ITEM_PER_PAGE) // 그중에 skip은 전 페이지에서 count 만큼 곱한 수를 뺀 다음 데이터
+  // .limit(ITEM_PER_PAGE) // 현재 가져와야할 count 만큼
+  // 페이지 하드 코딩말고 업데이트 되는 방식으로 진행하는 법
   Product.find()
+    .count()
+    .then((numProducts) => {
+      totalItems = numProducts;
+      return Product.find()
+        .skip((page - 1) * ITEM_PER_PAGE)
+        .limit(ITEM_PER_PAGE);
+    })
     .then((products) => {
-      res.render("shop/index", {
+      return res.render("shop/index", {
         prods: products,
         pageTitle: "Shop",
         path: "/",
+        totalProducts: totalItems,
+        hasNextPage: ITEM_PER_PAGE * page < totalItems,
+        hasPreviousPage: page > 1,
+        nextPage: page + 1,
+        previousPage: page - 1,
+        lastPage: Math.ceil(totalItems / ITEM_PER_PAGE),
         csrfToken: req.csrfToken(), // csrfToken 매서드는 미들웨어에 의해 추가된다. app.js 참고
       });
     })
@@ -151,60 +172,63 @@ const postOrder = (req, res, next) => {
 const getInvoice = (req, res, next) => {
   const orderId = req.params.orderId;
 
-  Order.findById(orderId).then(order => {
-    if(!order){
-      return next(new Error("No order found."));
-    }
+  Order.findById(orderId)
+    .then((order) => {
+      if (!order) {
+        return next(new Error("No order found."));
+      }
 
-    if(order.user.userId.toString() !== req.user._id.toString()){
-      return next(new Error("Unauthorized"));
-    }
+      if (order.user.userId.toString() !== req.user._id.toString()) {
+        return next(new Error("Unauthorized"));
+      }
 
-    const invoiceName = `invoice-${orderId}.pdf`;
-    const invoicePath = path.join("data", "invoices", invoiceName);
+      const invoiceName = `invoice-${orderId}.pdf`;
+      const invoicePath = path.join("data", "invoices", invoiceName);
 
-    // PDF 업로드 말고 만드는 방법
-     const pdfDoc = new PDFDocument();
-     res.setHeader("Content-Type", "application/pdf");
-     res.setHeader("Content-Disposition", `inline; filename='${invoiceName}'`);
-     pdfDoc.pipe(fs.createWriteStream(invoicePath));
-     pdfDoc.pipe(res);
+      // PDF 업로드 말고 만드는 방법
+      const pdfDoc = new PDFDocument();
+      res.setHeader("Content-Type", "application/pdf");
+      res.setHeader("Content-Disposition", `inline; filename='${invoiceName}'`);
+      pdfDoc.pipe(fs.createWriteStream(invoicePath));
+      pdfDoc.pipe(res);
 
-     let totalPrice = 0;
-     pdfDoc.fontSize(26).text("Invoice", {
-       underline: true
-     });
-     pdfDoc.text("-------------------------");
-     order.products.forEach(prod => {
-         console.log(prod)
-       totalPrice += prod.quantity * prod.productData.price;
-       pdfDoc.fontSize(14).text(`${prod.productData.title}-${prod.quantity} x $ ${prod.productData.price}`);
-     })
+      let totalPrice = 0;
+      pdfDoc.fontSize(26).text("Invoice", {
+        underline: true,
+      });
+      pdfDoc.text("-------------------------");
+      order.products.forEach((prod) => {
+        console.log(prod);
+        totalPrice += prod.quantity * prod.productData.price;
+        pdfDoc
+          .fontSize(14)
+          .text(`${prod.productData.title}-${prod.quantity} x $ ${prod.productData.price}`);
+      });
 
       pdfDoc.text("---");
       pdfDoc.fontSize(20).text(`Total Price: $ ${totalPrice}`); // 생성한 pdf에 텍스트를 적겠다.
       pdfDoc.end(); // pdf 생성을 끝내겠다
 
-    // 이렇게 진행하면 메모리 낭비됨.
-    // fs.readFile(invoicePath, (err, data) => {
-    //   if(err){
-    //     return next(err);
-    //   }
-    //
-    //   res.setHeader("Content-Type", "application/pdf"); // 반환하는 형식을 json이 아니라 pdf 로 반환
-    //   res.setHeader("Content-Disposition", `inline; filename='${invoiceName}'`); // a 링크 클릭시, 새탭에서 파일 열기
-    //   res.send(data);
-    // });
+      // 이렇게 진행하면 메모리 낭비됨.
+      // fs.readFile(invoicePath, (err, data) => {
+      //   if(err){
+      //     return next(err);
+      //   }
+      //
+      //   res.setHeader("Content-Type", "application/pdf"); // 반환하는 형식을 json이 아니라 pdf 로 반환
+      //   res.setHeader("Content-Disposition", `inline; filename='${invoiceName}'`); // a 링크 클릭시, 새탭에서 파일 열기
+      //   res.send(data);
+      // });
 
-  //   스트리밍으로 다운 받는 방법
-  //   const file = fs.createReadStream(invoicePath); // 이렇게 하면 node가 데이터를 차례대로 데이터 청크를 읽게 된다.
-  //   res.setHeader("Content-Type", "application/pdf");
-  //   res.setHeader("Content-Disposition", `inline; filename='${invoiceName}'`);
-  //
-  //   file.pipe(res); // pipe 메서드를 이용해 읽어들인 데이터를 res로 전달한다.
-  }).catch(err => next(err))
-
-}
+      //   스트리밍으로 다운 받는 방법
+      //   const file = fs.createReadStream(invoicePath); // 이렇게 하면 node가 데이터를 차례대로 데이터 청크를 읽게 된다.
+      //   res.setHeader("Content-Type", "application/pdf");
+      //   res.setHeader("Content-Disposition", `inline; filename='${invoiceName}'`);
+      //
+      //   file.pipe(res); // pipe 메서드를 이용해 읽어들인 데이터를 res로 전달한다.
+    })
+    .catch((err) => next(err));
+};
 
 export default {
   getProducts,
@@ -215,5 +239,5 @@ export default {
   postCart,
   postCartDeleteProduct,
   postOrder,
-  getInvoice
+  getInvoice,
 };
