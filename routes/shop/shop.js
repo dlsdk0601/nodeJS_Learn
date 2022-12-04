@@ -14,11 +14,7 @@ shopRoutes.get("/products/:productId", shopController.getProduct);
 
 shopRoutes.get("/cart", isAuthHaldler, shopController.getCart);
 
-shopRoutes.post(
-  "/cart-delete-item",
-  isAuthHaldler,
-  shopController.postCartDeleteProduct
-);
+shopRoutes.post("/cart-delete-item", isAuthHaldler, shopController.postCartDeleteProduct);
 
 shopRoutes.post("/cart", isAuthHaldler, shopController.postCart);
 
@@ -27,5 +23,7 @@ shopRoutes.post("/create-order", isAuthHaldler, shopController.postOrder);
 shopRoutes.get("/orders", isAuthHaldler, shopController.getOrders);
 
 shopRoutes.get("/orders/:orderId", isAuthHaldler, shopController.getInvoice);
+
+shopRoutes.get("/checkout", isAuthHaldler, shopController.getCheckout);
 
 export default shopRoutes;
