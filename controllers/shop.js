@@ -246,6 +246,29 @@ const getInvoice = (req, res, next) => {
     .catch((err) => next(err));
 };
 
+const getCheckout = (req, res, next) => {
+  return req.user
+    .populate("cart.items.productId") // cart 객체를 반환한다.
+    .then((user) => {
+      let totalSum = 0;
+      const products = [...user.cart.items];
+
+      const _ignore = products.map((item) => (totalSum += item.quantity * item.productId.price));
+
+      return res.render("shop/checkout", {
+        pageTitle: "checkout",
+        path: "/checkout",
+        products: products ?? [],
+        totalSum,
+      });
+    })
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
+};
+
 export default {
   getProducts,
   getIndex,
@@ -256,4 +279,5 @@ export default {
   postCartDeleteProduct,
   postOrder,
   getInvoice,
+  getCheckout,
 };
