@@ -3,7 +3,7 @@ extends ../layouts/main-layout.pug
 block title 
     title #{pageTitle}
 
-block content 
+block content
     main 
         if products.length > 0
             ul 
@@ -15,8 +15,9 @@ block content
                             button(type="submit", class="btn") Delete
             hr
             .centered
-                form(action="/create-order", method="POST")
-                    input(type="hidden", name="_csrf", value=(csrfToken))
-                    button(type="submit", class="btn") Order Now!
+                //form(action="/create-order", method="POST")
+                //    input(type="hidden", name="_csrf", value=(csrfToken))
+                //    button(type="submit", class="btn") Order Now!
+                a(href="/checkout", class="btn") Order Now!
         else 
             h1 No Products in Cart!!
