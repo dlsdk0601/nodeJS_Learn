@@ -18,14 +18,10 @@ adminRoutes.post(
     body("description").isLength({ min: 5, max: 200 }).trim(),
   ],
   isAuthHaldler,
-  adminController.postAddProduct
+  adminController.postAddProduct,
 );
 
-adminRoutes.get(
-  "/edit-product/:productId",
-  isAuthHaldler,
-  adminController.getEditProduct
-);
+adminRoutes.get("/edit-product/:productId", isAuthHaldler, adminController.getEditProduct);
 
 adminRoutes.post(
   "/edit-product",
@@ -35,13 +31,12 @@ adminRoutes.post(
     body("description").isLength({ min: 5, max: 200 }).trim(),
   ],
   isAuthHaldler,
-  adminController.postEditProduct
+  adminController.postEditProduct,
 );
 
-adminRoutes.post(
-  "/delete-product",
-  isAuthHaldler,
-  adminController.postDeleteProduct
-);
+adminRoutes.post("/delete-product", isAuthHaldler, adminController.postDeleteProduct);
+
+// 제품 삭제를 비동기 통신으로 시도해보기 위한 API
+adminRoutes.delete("/product/:productId", isAuthHaldler, adminController.deleteProduct);
 
 export default adminRoutes;
