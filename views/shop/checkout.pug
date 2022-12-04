@@ -2,3 +2,13 @@ extends ../layouts/main-layout.pug
 
 block title 
     title #{pageTitle}
+
+block content
+    main
+        ul
+          each product in products
+              li
+                  p #{product.productId.title} (quantity: #{product.quantity})
+
+        div(class="centered")
+            h2  Total: #{totalSum}
