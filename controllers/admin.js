@@ -8,7 +8,7 @@ const getAddProduct = (req, res) => {
   // if (!req.session.isLogged) {
   //   return res.redirect("/login");
   // }
-  console.log("start")
+  console.log("start");
   return res.render("admin/edit-product", {
     pageTitle: "add-product",
     path: "/admin/add-product",
@@ -56,7 +56,7 @@ const postAddProduct = (req, res, next) => {
   console.log("imageUrl");
   console.log(image);
 
-  if(!image){
+  if (!image) {
     return res.status(422).render("admin/edit-product", {
       pageTitle: "Add-product",
       path: "/admin/products",
@@ -99,7 +99,7 @@ const postAddProduct = (req, res, next) => {
     imageUrl,
     userId: req.user, // 원래는 req.user._id가 정확하지만, mongoose는 편리하게 user 객체도 저장가능하며, 객체 안에 _id를 찾아서 할당시킨다. 왜냐면 product schema를 정의할때, type이 ObjectId로 정의했기 떄문
   });
-  console.log("here1")
+  console.log("here1");
   // mongoose를 사용하기 이전에 product라는 class에 save라는 함수를 만들어서 사용했지만, 이제 mongoose 내부에 있는 save라는 함수로 db에 저장
   product
     .save()
@@ -165,7 +165,7 @@ const postEditProduct = (req, res, next) => {
 
       // 여기서 파라미터 product는 js 객체가 아닌 mongoDB 객체이기에 메소드가 포함이다.
       product.title = title;
-      if(image){
+      if (image) {
         fileHelper.deleteFile(product.imageUrl);
         product.imageUrl = image.path;
       }
@@ -185,19 +185,43 @@ const postEditProduct = (req, res, next) => {
 
 const postDeleteProduct = (req, res, next) => {
   const prodId = req.body.productId;
-  Product.findById(prodId).then(prod => {
-    if(!prod){
-      return next(new Error("Prodcut not found."))
-    }
-    fileHelper.deleteFile(prod.imageUrl);
-    return Product.deleteOne({ _id: prodId, userId: req.user._id }) // 둘다 만족하는 조건인 상품을 삭제하는데, userId 때문에 자동으로 권한 체크 하게 된다
-  }).then(() => {
+  Product.findById(prodId)
+    .then((prod) => {
+      if (!prod) {
+        return next(new Error("Prodcut not found."));
+      }
+      fileHelper.deleteFile(prod.imageUrl);
+      return Product.deleteOne({ _id: prodId, userId: req.user._id }); // 둘다 만족하는 조건인 상품을 삭제하는데, userId 때문에 자동으로 권한 체크 하게 된다
+    })
+    .then(() => {
       res.redirect("/admin/products");
     })
     .catch((err) => {
       const error = new Error(err);
       error.httpStatusCode = 500;
       return next(error);
+    });
+};
+
+// 제품 삭제 비동기통신 처리를 위한 controller
+const deleteProduct = (req, res, next) => {
+  // delete 요청에는 body를 담을 수 없어서, pathVariable를 사용한다.
+
+  const prodId = req.params.productId;
+  Product.findById(prodId)
+    .then((product) => {
+      if (!product) {
+        return next(new Error("Product not found"));
+      }
+
+      fileHelper.deleteFile(product.imageUrl);
+      return Product.deleteOne({ _id: prodId, userId: req.user._id });
+    })
+    .then(() => {
+      return res.status(200).json({ message: "Success!", result: true });
+    })
+    .catch((err) => {
+      return res.status(500).json({ message: "Deleting product failed.", result: false });
     });
 };
 
@@ -208,4 +232,5 @@ export default {
   getEditProduct,
   postEditProduct,
   postDeleteProduct,
+  deleteProduct,
 };
