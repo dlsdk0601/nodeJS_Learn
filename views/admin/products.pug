@@ -6,6 +6,7 @@ block title
 block styles 
     link(rel="stylesheet", href="/css/product.css")
     link(rel="stylesheet", href="/css/main.css")
+    script(src="/js/admin.js", defer)
 
 block content
     main
@@ -22,9 +23,8 @@ block content
                             p.product__description #{product.description}
                         .card__actions
                             a(href=(`/admin/edit-product/${product._id}?edit=true`)).btn edit
-                            form(action="/admin/delete-product", method="POST")
-                                input(type="hidden" value=(product._id) name="productId")
-                                input(type="hidden", name="_csrf", value=(csrfToken))
-                                button(type="submit").btn Delete
+                            input(type="hidden" value=(product._id) name="productId")
+                            input(type="hidden", name="_csrf", value=(csrfToken))
+                            button(class="delete-btn", type="submit").btn Delete
         else
             h1 No Products
