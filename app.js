@@ -34,33 +34,37 @@ const __dirname = path.resolve();
 app.set("view engine", "pug");
 app.set("views", "views");
 
-app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.urlencoded({ extended: false })); // url 암호화
 
 // dest: "images"는 buffer로 전달해주는게 아니라  /images라는 폴더에 바로 생성시킨다.
 // storage 설정도 가능
 const fileStorage = multer.diskStorage({
-    destination: (req, file, callback) => {
-        callback(null, "images");
-    },  // 파일의 저장 위치
-    filename: (req, file, callback) => {
-        callback(null, new Date().toISOString() + "-" + file.originalname);
-    } // 파일 이름
-})
+  destination: (req, file, callback) => {
+    callback(null, "images");
+  }, // 파일의 저장 위치
+  filename: (req, file, callback) => {
+    callback(null, new Date().toISOString() + "-" + file.originalname);
+  }, // 파일 이름
+});
 
 const fileFilter = (req, file, callback) => {
-    if(file.mimetype === "image/png" || file.mimetype === "image/jpg" || file.mimetype === "image/jpeg"){
-        callback(null, true);
-    }else{
-        callback(null, false);
-    }
-}
-app.use(multer({storage: fileStorage, fileFilter: fileFilter}).single("image"));
+  if (
+    file.mimetype === "image/png" ||
+    file.mimetype === "image/jpg" ||
+    file.mimetype === "image/jpeg"
+  ) {
+    callback(null, true);
+  } else {
+    callback(null, false);
+  }
+};
+app.use(multer({ storage: fileStorage, fileFilter: fileFilter }).single("image"));
 
 // html에 해당하는 css 파일이 다운 받아지지 않음
 // public폴더는 공개 폴더이므로 여기에 css같은 파일을 넣어놓음. 그외 라우팅은 express에서 라우팅 처리하려고 시도함
 // express.static 정적으로 서비스하기 원하는 폴더 경로를 입력하면 된다. (바로 읽기 권한은 허용하고자하는 폴더)
 // 이제 .css나 .js파일을 찾으려할때는 자동으로 public 폴더로 포워딩한다.
-app.use(express.static(path.join(__dirname, "public")));  // root폴더를 기준으로 public 폴더를 공개 폴더로. => 때문에 public안에 있는 파일은 / 경로부터 찾는다
+app.use(express.static(path.join(__dirname, "public"))); // root폴더를 기준으로 public 폴더를 공개 폴더로. => 때문에 public안에 있는 파일은 / 경로부터 찾는다
 app.use("/images+", express.static(path.join(__dirname, "images"))); // 여기도 / 부터 찾게되는데 그렇지 않게 하기 위해 /images를 붙인다
 
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -79,7 +83,7 @@ app.use(
     resave: false,
     saveUninitialized: false,
     store: store,
-  })
+  }),
 );
 
 // 로그아웃 할 때, postLogout 요청에도 토큰을 확인하나, 로그아웃이기에 토큰이 없다.
@@ -131,11 +135,11 @@ app.use(errorPage.get404);
 // catch 안에 던져진 에러 처리
 app.use((err, req, res) => {
   // res.status.(err.thhpStatusCode).render(...) 이런식으로 redirect가 아닌 render로도 처리 가능
-  console.log(err)
+  console.log(err);
   return res.status(500).render("500", {
     pageTitle: "Error!",
     path: "/500",
-    isAuthenticated: req.session.isLoggedIn
+    isAuthenticated: req.session.isLoggedIn,
   });
 });
 
