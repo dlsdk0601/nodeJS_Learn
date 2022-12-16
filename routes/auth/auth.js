@@ -32,9 +32,7 @@ authRouter.post(
       .normalizeEmail(), // 데이터 살균 데이터에 type에 맞게 변화되서 저장시켜준다. 이메일의 경우 대문자를 모두 소문자로 바꿔줌
     body("password")
       .isLength({ min: 5 })
-      .withMessage(
-        "please enter a password with only numbers and text and at least 5 characters."
-      )
+      .withMessage("please enter a password with only numbers and text and at least 5 characters.")
       .isAlphanumeric()
       .trim(),
     body("confirmPassword")
@@ -48,22 +46,16 @@ authRouter.post(
         return true;
       }),
   ],
-  authController.postSignUp
+  authController.postSignUp,
 );
 
 authRouter.post(
   "/login",
   [
-    body("email")
-      .isEmail()
-      .withMessage("please enter a valid email address.")
-      .normalizeEmail(),
-    body("password", "Password has to be valid")
-      .isLength({ min: 5 })
-      .isAlphanumeric()
-      .trim(),
+    body("email").isEmail().withMessage("please enter a valid email address.").normalizeEmail(),
+    body("password", "Password has to be valid").isLength({ min: 5 }).isAlphanumeric().trim(),
   ],
-  authController.postLogin
+  authController.postLogin,
 );
 
 authRouter.post("/logout", authController.postLogout);
